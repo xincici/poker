@@ -42,38 +42,40 @@ import confetti from '../utils/confetti';
 
 <style scoped lang="scss">
 .wrapper {
+  --border-color: #eee;
+  --text-color: #2c3e50;
+  --bg-color: #fff;
+  &.dark {
+    --border-color: #444;
+    --text-color: #eee;
+    --bg-color: #333;
+  }
+}
+.wrapper {
   width: 100vw;
   min-width: 360px;
   min-height: 100vh;
   box-sizing: border-box;
-  color: #2c3e50;
+  color: var(--text-color);
+  background: var(--bg-color);
   overflow-y: auto;
-  &.dark {
-    background: #444;
-    color: #eee;
-    .header-wrapper {
-      border-bottom: 1px solid #333;
-    }
-    .game-area {
-    }
-  }
   .header-wrapper {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border-color);
   }
   .game-area {
     max-width: 500px;
     margin: 0 auto;
     .money-area {
       display: flex;
-      border: 1px solid #eee;
-      border-width: 0 1px 1px;
+      border: 1px solid var(--border-color);
+      border-top: 0 none;
       div {
         flex: 1 0 30%;
         position: relative;
         text-align: right;
         line-height: 1.8;
         box-sizing: border-box;
-        border-right: 1px solid #eee;
+        border-right: 1px solid var(--border-color);
         font-size: 18px;
         padding: 3px 15px;
         font-weight: bold;
@@ -92,6 +94,8 @@ import confetti from '../utils/confetti';
     .rule-area {
       display: flex;
       flex-wrap: wrap;
+      border: 1px solid var(--border-color);
+      border-top: 0 none;
       .rule {
         flex: 1 0 50%;
         line-height: 1.6;

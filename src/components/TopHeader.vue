@@ -28,6 +28,7 @@ import { isDark, toggle as toggleTheme } from '../utils/theme';
   max-width: 500px;
   margin: 0 auto;
   padding: 10px 8px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   .title {
