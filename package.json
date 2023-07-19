@@ -1,0 +1,27 @@
+{
+  "name": "poker-game",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@iconify-json/carbon": "^1.1.17",
+    "@iconify-json/mdi": "^1.0.12",
+    "@unocss/preset-icons": "^0.53.1",
+    "@unocss/webpack": "^0.20.1",
+    "canvas-confetti": "^1.4.0",
+    "sass": "^1.63.3",
+    "sass-loader": "^13.3.2",
+    "unocss": "^0.53.1",
+    "vue": "^3.2.45"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.0.0",
+    "vite": "^4.1.0",
+    "vite-plugin-pwa": "^0.14.7"
+  }
+}
