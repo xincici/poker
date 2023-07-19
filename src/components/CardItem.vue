@@ -1,12 +1,13 @@
 <template>
   <span class="card" :class="`card-${color}`">
-    <span class="card-num" v-if="notBack">{{ num }}</span>
+    <span class="card-num card-num-top" v-if="num">{{ num }}</span>
+    <span class="card-num card-num-bottom" v-if="num">{{ num }}</span>
     <span class="card-type">
       <i i-mdi-cards-heart v-if="type === 'heart'" />
-      <i i-mdi-cards-diamond v-if="type === 'diamond'" />
-      <i i-mdi-cards-spade v-if="type === 'spade'" />
-      <i i-mdi-cards-club v-if="type === 'club'" />
-      <i i-mdi-cards-playing v-if="!notBack" class="card-type-back" />
+      <i i-mdi-cards-diamond v-else-if="type === 'diamond'" />
+      <i i-mdi-cards-spade v-else-if="type === 'spade'" />
+      <i i-mdi-cards-club v-else-if="type === 'club'" />
+      <i i-mdi-cards-playing v-else class="card-type-back" />
     </span>
   </span>
 </template>
@@ -19,9 +20,6 @@ const props = defineProps(['num', 'type']);
 const color = computed(() => {
   return ['heart', 'diamond'].includes(props.type) ? 'red' : 'black';
 });
-const notBack = computed(() => {
-  return Boolean(props.num && props.type);
-});
 
 </script>
 
@@ -29,24 +27,29 @@ const notBack = computed(() => {
 .card {
   display: inline-block;
   position: relative;
-  width: 80px;
-  height: 120px;
-  border: 1px solid #aaa;
+  width: 60px;
+  height: 100px;
+  border: 1px solid #ddd;
   border-radius: 5px;
-  margin: 5px;
-  background: #fff;
+  margin: 4px;
+  background: #fafafa;
+  color: #111;
   &-red {
     color: #e00;
   }
-  &-black {
-    color: #111;
-  }
   &-num {
     position: absolute;
-    top: 6px;
-    left: 6px;
     font-size: 18px;
     font-weight: bold;
+    &-top {
+      top: 5px;
+      left: 5px;
+    }
+    &-bottom {
+      bottom: 5px;
+      right: 5px;
+      transform: rotate(180deg);
+    }
   }
   &-type {
     position: absolute;
@@ -56,7 +59,7 @@ const notBack = computed(() => {
     font-weight: bold;
     transform: translate(-50%, -50%);
     &-back {
-      font-size: 60px;
+      font-size: 50px;
     }
   }
 }

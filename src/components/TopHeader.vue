@@ -3,9 +3,6 @@
     <span class="item-wrapper">
       <HelpDialog />
     </span>
-    <span class="item-wrapper">
-      <i i-mdi-power-socket-fr />
-    </span>
     <span class="title">{{ i18n('gameTitle') }}</span>
     <span class="item-wrapper" @click="toggleTheme">
       <i i-carbon-moon v-if="isDark" />
@@ -28,7 +25,7 @@ import { isDark, toggle as toggleTheme } from '../utils/theme';
 
 <style scoped lang="scss">
 .header-wrapper {
-  max-width: 600px;
+  max-width: 500px;
   margin: 0 auto;
   padding: 10px 8px;
   display: flex;
