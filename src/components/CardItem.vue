@@ -1,5 +1,5 @@
 <template>
-  <span class="card" :class="`card-${color} ${notBack ? '' : 'card-back'}`">
+  <span class="card" :class="`card-${color}`">
     <span class="card-num" v-if="notBack">{{ num }}</span>
     <span class="card-type">
       <i i-mdi-cards-heart v-if="type === 'heart'" />
@@ -41,9 +41,6 @@ const notBack = computed(() => {
   &-black {
     color: #111;
   }
-  &-back {
-    background: #888;
-  }
   &-num {
     position: absolute;
     top: 6px;
@@ -59,7 +56,7 @@ const notBack = computed(() => {
     font-weight: bold;
     transform: translate(-50%, -50%);
     &-back {
-      font-size: 50px;
+      font-size: 60px;
     }
   }
 }

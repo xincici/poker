@@ -1,4 +1,4 @@
-# Number Puzzle
+# Poker Game
 
 ### Play Game
-goto [Number Puzzle](https://xincici-puzzle.netlify.app/)
+goto [Poker Game](https://xincici-poker.netlify.app/)

@@ -3,7 +3,7 @@ import { ref, watchEffect } from 'vue';
 import { LANG_KEY } from '../utils/constants.js';
 
 const en = {
-  gameTitle: 'Number Puzzle',
+  gameTitle: 'Poker',
   bestScore: 'Best Score',
   availableClicks: 'Click Count',
   start: 'New Game',
@@ -17,7 +17,7 @@ const en = {
   tipLost: 'You Lose'
 };
 const cn = {
-  gameTitle: '数字迷宫',
+  gameTitle: '纸牌',
   bestScore: '最佳得分',
   availableClicks: '点击次数',
   start: '新游戏',
