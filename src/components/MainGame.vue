@@ -24,10 +24,18 @@
           <button class="btn">Small</button>
         </div>
         <div class="opt-area-right">
-          <button class="btn" @click="onPlayClick">
+          <button
+            class="btn"
+            :disabled="game.animating || game.stage > SECOND"
+            @click="onPlayClick"
+          >
             {{ game.stage === WAIT ? 'Roll' : 'Change' }}
           </button>
-          <button class="btn" @click="onResetClick" :disabled="game.stage < GUESS">
+          <button
+            class="btn"
+            :disabled="game.animating || game.stage < GUESS"
+            @click="onResetClick"
+          >
             {{ game.stage === GUESS ? 'Settle' : 'Reset' }}
           </button>
         </div>
@@ -108,6 +116,7 @@ function onCardClick(idx) {
 
 async function onPlayClick() {
   if (game.animating) return;
+  if (game.stage > SECOND) return;
   game.animating = true;
   if (game.stage === WAIT) {
     if (game.total >= game.bet) {

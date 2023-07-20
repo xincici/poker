@@ -5,7 +5,7 @@ const DARK = 'dark';
 const LIGHT = 'light';
 
 const themeColor = {
-  [DARK]: '#444',
+  [DARK]: '#333',
   [LIGHT]: '#fff'
 };
 
