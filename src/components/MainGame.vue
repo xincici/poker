@@ -14,6 +14,8 @@
           :key="idx"
           :num="getNumStr(card[0])"
           :type="card[1]"
+          :hold="game.holds[idx]"
+          @click="onCardClick(idx)"
         />
       </div>
       <div class="opt-area">
@@ -22,8 +24,10 @@
           <button class="btn">Small</button>
         </div>
         <div class="opt-area-right">
-          <button class="btn" @click="initGame">Roll</button>
-          <button class="btn" disabled>Check</button>
+          <button class="btn" @click="onPlayClick">
+            {{ game.stage === WAIT ? 'Roll' : 'Change' }}
+          </button>
+          <button class="btn" @click="onResetClick">Reset</button>
         </div>
       </div>
     </div>
@@ -31,7 +35,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, watchEffect } from 'vue';
+import { ref, unref, reactive, computed, watch, watchEffect } from 'vue';
 import sampleSize from 'lodash.samplesize';
 
 import TopHeader from './TopHeader.vue';
@@ -42,29 +46,78 @@ import confetti from '../utils/confetti';
 
 const INIT_TOTAL = 1000;
 const INIT_BET = 10;
-const [ WATING, FIRST, SECOND, GUESS ] = [0, 1, 2, 3];
+const LEN = 5;
+const [ WAIT, FIRST, SECOND, GUESS ] = [0, 1, 2, 3];
 const ALL_CARDS = new Array(13 * 4).fill(1).map((_, i) => i);
 const TYPES = ['heart', 'diamond', 'spade', 'club'];
+
+const sleep = ms => new Promise(res => setTimeout(res, ms));
+
+const getInitData = () => ({
+  win: 0,
+  stage: WAIT,
+  animating: false,
+  cards: Array.from({ length: LEN }, () => (['', ''])),
+  holds: new Array(LEN).fill(false),
+});
 
 const game = reactive({
   total: INIT_TOTAL,
   bet: INIT_BET,
-  win: 0,
-  stage: WATING,
-  animating: false,
-  cards: Array.from({ length: 5 }, () => (['', ''])),
-  holds: new Array(5).fill(false),
+  ...getInitData(),
 });
 
-function getCard(val) {
+const curCards = computed(() => game.cards.map(cardToNum));
+
+function numToCard(val) {
   const num = val % 13 + 1;
   const type = TYPES[~~(val / 13)];
   return [ num, type ];
 }
+function cardToNum(card) {
+  const [ num, type ] = card;
+  return TYPES.indexOf(type) * 13 + num;
+}
 
-function initGame() {
-  const cards = sampleSize(ALL_CARDS, 5);
-  game.cards = cards.map(val => getCard(val));
+function randomOne() {
+  while (true) {
+    const val = ~~(Math.random() * 52);
+    if (!curCards.value.includes(val)) return val;
+  }
+}
+
+function onCardClick(idx) {
+  if (game.stage !== FIRST) return;
+  game.holds[idx] = !game.holds[idx];
+}
+
+async function onPlayClick() {
+  if (game.animating) return;
+  game.animating = true;
+  if (game.stage === WAIT) {
+    game.cards = Array.from({ length: LEN }, () => (['', '']));
+    const cards = sampleSize(ALL_CARDS, LEN);
+    for (let i = 0; i < LEN; i++) {
+      await sleep(250);
+      game.cards[i] = numToCard(cards[i]);
+    }
+  } else if (game.stage === FIRST) {
+    game.holds.forEach((val, idx) => {
+      if (val) game.cards[idx] = ['', ''];
+    });
+    for (let i = 0; i < LEN; i++) {
+      if (!game.holds[i]) continue;
+      await sleep(250);
+      game.cards[i] = numToCard(randomOne());
+      game.holds[i] = false;
+    }
+  }
+  game.animating = false;
+  game.stage++;
+}
+
+function onResetClick() {
+  Object.assign(game, getInitData());
 }
 
 function getNumStr(num) {

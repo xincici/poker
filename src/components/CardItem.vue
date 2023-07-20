@@ -1,5 +1,5 @@
 <template>
-  <span class="card" :class="`card-${color}`">
+  <span class="card" :class="`card-${color} ${hold ? 'card-hold' : ''}`">
     <span class="card-num card-num-top" v-if="num">{{ num }}</span>
     <span class="card-num card-num-bottom" v-if="num">{{ num }}</span>
     <span class="card-type">
@@ -15,7 +15,7 @@
 <script setup>
 import { computed } from 'vue';
 
-const props = defineProps(['num', 'type', 'mini']);
+const props = defineProps(['num', 'type', 'hold', 'mini']);
 
 const color = computed(() => {
   return ['heart', 'diamond'].includes(props.type) ? 'red' : 'black';
@@ -36,6 +36,9 @@ const color = computed(() => {
   color: #111;
   &-red {
     color: #e00;
+  }
+  &-hold {
+    outline: 3px solid #e00;
   }
   &-num {
     position: absolute;
