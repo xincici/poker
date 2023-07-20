@@ -17,9 +17,15 @@
           :hold="game.holds[idx]"
           @click="onCardClick(idx)"
         />
+        <div class="result-win" v-if="game.stage === GUESS">
+          🎉🎉 {{ i18n('tipWin') }} 🎉🎉
+        </div>
+        <div class="result-lose" v-if="game.stage === LOSE">
+          👻👻 {{ i18n('tipLost') }} 👻👻
+        </div>
       </div>
       <div class="opt-area">
-        <div class="opt-area-left">
+        <div class="opt-area-left" hidden>
           <button class="btn">Big</button>
           <button class="btn">Small</button>
         </div>
@@ -206,10 +212,12 @@ function judgeResult() {
   --border-color: #eee;
   --text-color: #2c3e50;
   --bg-color: #fff;
+  --mask-color: #f1f1f1;
   &.dark {
     --border-color: #444;
     --text-color: #eee;
     --bg-color: #333;
+    --mask-color: #222;
   }
 }
 .wrapper {
@@ -241,8 +249,8 @@ function judgeResult() {
     margin: 0 auto;
     .money-area {
       display: flex;
+      margin-top: 50px;
       border: 1px solid var(--border-color);
-      border-top: 0 none;
       div {
         flex: 1 0 30%;
         position: relative;
@@ -251,7 +259,7 @@ function judgeResult() {
         box-sizing: border-box;
         border-right: 1px solid var(--border-color);
         font-size: 15px;
-        padding: 2px 12px;
+        padding: 15px 15px 2px;
         font-weight: bold;
         &:last-child {
           flex: 1 0 40%;
@@ -266,9 +274,27 @@ function judgeResult() {
       }
     }
     .card-area {
-      padding: 20px 0;
+      padding: 30px 0;
       border: 1px solid var(--border-color);
       border-top: 0 none;
+      position: relative;
+      .result-win,.result-lose {
+        background: var(--mask-color);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        color: #1a1;
+        font-weight: bold;
+        opacity: 0.9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .result-lose {
+        color: #a11;
+      }
     }
     .opt-area {
       display: flex;
@@ -280,7 +306,7 @@ function judgeResult() {
       &-left,&-right {
         flex: 1 0 50%;
         box-sizing: border-box;
-        padding: 4px 12px;
+        padding: 18px 12px;
       }
     }
   }

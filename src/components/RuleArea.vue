@@ -9,7 +9,7 @@
       }"
     >
       <span>{{ item.title }}</span>
-      <span>{{ item.times }}</span>
+      <span>{{ item.times }}倍</span>
     </div>
   </div>
 </template>
@@ -34,6 +34,7 @@ defineProps(['result']);
 .rule-area {
   display: flex;
   flex-wrap: wrap;
+  padding: 20px 0;
   border: 1px solid var(--border-color);
   border-top: 0 none;
   .rule {
