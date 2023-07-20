@@ -15,7 +15,7 @@
 <script setup>
 import { computed } from 'vue';
 
-const props = defineProps(['num', 'type']);
+const props = defineProps(['num', 'type', 'mini']);
 
 const color = computed(() => {
   return ['heart', 'diamond'].includes(props.type) ? 'red' : 'black';
@@ -29,7 +29,7 @@ const color = computed(() => {
   position: relative;
   width: 60px;
   height: 100px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 5px;
   margin: 4px;
   background: #fafafa;
@@ -39,15 +39,15 @@ const color = computed(() => {
   }
   &-num {
     position: absolute;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     &-top {
-      top: 5px;
-      left: 5px;
+      top: 3px;
+      left: 3px;
     }
     &-bottom {
-      bottom: 5px;
-      right: 5px;
+      bottom: 3px;
+      right: 3px;
       transform: rotate(180deg);
     }
   }
@@ -64,3 +64,4 @@ const color = computed(() => {
   }
 }
 </style>
+

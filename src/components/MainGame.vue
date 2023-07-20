@@ -7,24 +7,24 @@
         <div><span class="title">Win</span>10</div>
         <div><span class="title">Bet</span>10</div>
       </div>
-      <div class="rule-area">
-        <div class="rule"><span>同花顺</span><span>250</span></div>
-        <div class="rule"><span>四条</span><span>60</span></div>
-        <div class="rule"><span>葫芦</span><span>20</span></div>
-        <div class="rule"><span>顺子</span><span>10</span></div>
-        <div class="rule"><span>同花</span><span>7</span></div>
-        <div class="rule"><span>三条</span><span>5</span></div>
-        <div class="rule"><span>两对</span><span>2</span></div>
-        <div class="rule"><span>大于8一对</span><span>1</span></div>
-      </div>
+      <RuleArea />
       <div class="card-area">
-        <CardItem num="5" type="heart" />
-        <CardItem num="A" type="diamond" />
-        <CardItem />
-        <CardItem num="J" type="spade" />
-        <CardItem num="Q" type="club" />
+        <CardItem
+          v-for="(card, idx) in game.cards"
+          :key="idx"
+          :num="getNumStr(card[0])"
+          :type="card[1]"
+        />
       </div>
       <div class="opt-area">
+        <div class="opt-area-left">
+          <button class="btn">Big</button>
+          <button class="btn">Small</button>
+        </div>
+        <div class="opt-area-right">
+          <button class="btn" @click="initGame">Roll</button>
+          <button class="btn" disabled>Check</button>
+        </div>
       </div>
     </div>
   </div>
@@ -32,11 +32,50 @@
 
 <script setup>
 import { ref, reactive, computed, watch, watchEffect } from 'vue';
+import sampleSize from 'lodash.samplesize';
 
 import TopHeader from './TopHeader.vue';
+import RuleArea from './RuleArea.vue';
 import CardItem from './CardItem.vue';
 import { theme } from '../utils/theme';
 import confetti from '../utils/confetti';
+
+const INIT_TOTAL = 1000;
+const INIT_BET = 10;
+const [ WATING, FIRST, SECOND, GUESS ] = [0, 1, 2, 3];
+const ALL_CARDS = new Array(13 * 4).fill(1).map((_, i) => i);
+const TYPES = ['heart', 'diamond', 'spade', 'club'];
+
+const game = reactive({
+  total: INIT_TOTAL,
+  bet: INIT_BET,
+  win: 0,
+  stage: WATING,
+  animating: false,
+  cards: Array.from({ length: 5 }, () => (['', ''])),
+  holds: new Array(5).fill(false),
+});
+
+function getCard(val) {
+  const num = val % 13 + 1;
+  const type = TYPES[~~(val / 13)];
+  return [ num, type ];
+}
+
+function initGame() {
+  const cards = sampleSize(ALL_CARDS, 5);
+  game.cards = cards.map(val => getCard(val));
+}
+
+function getNumStr(num) {
+  num = +num;
+  if (num === 1) return 'A';
+  if (num >= 2 && num <= 10) return String(num);
+  if (num === 11) return 'J';
+  if (num === 12) return 'Q';
+  if (num === 13) return 'K';
+  return '';
+}
 
 </script>
 
@@ -59,6 +98,19 @@ import confetti from '../utils/confetti';
   color: var(--text-color);
   background: var(--bg-color);
   overflow-y: auto;
+  .btn {
+    padding: 8px 0;
+    width: 70px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+    background: rgba(60, 160, 60, .9);
+    &[disabled] {
+      background: rgba(150, 200, 150, .4);
+    }
+  }
   .header-wrapper {
     border-bottom: 1px solid var(--border-color);
   }
@@ -76,8 +128,8 @@ import confetti from '../utils/confetti';
         line-height: 1.8;
         box-sizing: border-box;
         border-right: 1px solid var(--border-color);
-        font-size: 18px;
-        padding: 3px 15px;
+        font-size: 15px;
+        padding: 2px 12px;
         font-weight: bold;
         &:last-child {
           flex: 1 0 40%;
@@ -85,31 +137,28 @@ import confetti from '../utils/confetti';
         }
         .title {
           position: absolute;
-          top: 2px;
-          left: 8px;
-          font-size: 14px;
+          top: 1px;
+          left: 6px;
+          font-size: 13px;
         }
       }
     }
-    .rule-area {
-      display: flex;
-      flex-wrap: wrap;
+    .card-area {
+      padding: 20px 0;
       border: 1px solid var(--border-color);
       border-top: 0 none;
-      .rule {
+    }
+    .opt-area {
+      display: flex;
+      border: 1px solid var(--border-color);
+      border-top: 0 none;
+      &-left {
+        border-right: 1px solid var(--border-color);
+      }
+      &-left,&-right {
         flex: 1 0 50%;
-        line-height: 1.6;
-        display: flex;
-        padding: 0;
         box-sizing: border-box;
-        justify-content: space-between;
-        padding: 0 10px;
-        &:nth-child(odd) {
-          padding-right: 15px;
-        }
-        &:nth-child(even) {
-          padding-left: 15px;
-        }
+        padding: 4px 12px;
       }
     }
   }

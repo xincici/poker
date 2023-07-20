@@ -14,6 +14,7 @@
     "@unocss/preset-icons": "^0.53.1",
     "@unocss/webpack": "^0.20.1",
     "canvas-confetti": "^1.4.0",
+    "lodash.samplesize": "^4.2.0",
     "sass": "^1.63.3",
     "sass-loader": "^13.3.2",
     "unocss": "^0.53.1",
