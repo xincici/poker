@@ -25,9 +25,11 @@ defineProps(['result']);
 @keyframes blink {
   from {
     opacity: 0.1;
+    transform: scale(1);
   }
   to {
     opacity: 1;
+    transform: scale(1.02);
   }
 }
 

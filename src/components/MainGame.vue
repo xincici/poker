@@ -85,6 +85,7 @@ import { bet, changeBet, MIN_BET, MAX_BET } from '../utils/bet.js';
 import { TOTAL_KEY, BET_KEY } from '../utils/constants.js';
 const LEN = 5;
 const CARDS_COUNT = 13 * 4;
+const DEFAULT_TOTAL = 1000;
 
 const [ WAIT, FIRST, SECOND, GUESS, LOSE ] = [0, 1, 2, 3, 4];
 const ALL_CARDS = new Array(CARDS_COUNT).fill(1).map((_, i) => i + 1);
@@ -106,7 +107,7 @@ const getInitData = () => ({
 });
 
 const game = reactive({
-  total: +localStorage.getItem(TOTAL_KEY) || 1000,
+  total: +localStorage.getItem(TOTAL_KEY) || DEFAULT_TOTAL,
   ...getInitData(),
 });
 
@@ -116,7 +117,6 @@ const randomCard = computed(() => numToCard(game.randomNum));
 let guessTimer = null;
 
 watch(() => game.bonus, val => {
-  if (val === 0) return;
   game.zoomWin = true;
   setTimeout(() => {
     game.zoomWin = false;
@@ -172,6 +172,10 @@ async function onPlayClick() {
   if (game.stage > SECOND) return;
   game.animating = true;
   if (game.stage === WAIT) {
+    if (game.total <= 0) {
+      alert('破产了请重新来过！');
+      game.total = DEFAULT_TOTAL;
+    }
     if (game.total >= bet.value) {
       game.total -= bet.value;
     } else {
@@ -222,18 +226,19 @@ function startGuessTimer() {
 }
 
 function guessBigOrSmall(isBig) {
+  if (!guessTimer) return;
   clearInterval(guessTimer);
   guessTimer = null;
   const tmpNum = game.randomNum % 13 || 13;
   if (tmpNum < 7 && isBig || tmpNum > 7 && !isBig) {
     game.bonus = 0;
-    setTimeout(onResetClick, 1000);
+    setTimeout(onResetClick, 1200);
     return;
   }
   if (tmpNum !== 7) {
     game.bonus *= 2;
   }
-  setTimeout(startGuessTimer, 1000);
+  setTimeout(startGuessTimer, 1200);
 }
 
 function judgeResult() {
@@ -280,7 +285,7 @@ function judgeResult() {
     transform: scale(1);
   }
   50% {
-    transform: scale(2.2);
+    transform: scale(2.1);
   }
   to {
     transform: scale(1);
@@ -338,7 +343,7 @@ function judgeResult() {
           display: inline-block;
           margin: 0 5px;
           &.zoom {
-            animation: 0.5s ease-in-out 0s zoom;
+            animation: 0.6s ease-in-out 0s zoom;
           }
         }
         .btn {
