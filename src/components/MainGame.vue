@@ -8,8 +8,8 @@
           <span class="money" :class="{zoom: game.zoomTotal}">{{ game.total }}</span>
         </div>
         <div>
-          <span class="title">{{ i18n('win') }}</span>
-          <span class="money" :class="{zoom: game.zoomWin}">{{ game.win }}</span>
+          <span class="title">{{ i18n('bonus') }}</span>
+          <span class="money" :class="{zoom: game.zoomWin}">{{ game.bonus }}</span>
         </div>
         <div>
           <span class="title">{{ i18n('bet') }}</span>
@@ -94,7 +94,7 @@ const TYPES = ['heart', 'diamond', 'spade', 'club'];
 const sleep = ms => new Promise(res => setTimeout(res, ms));
 
 const getInitData = () => ({
-  win: 0,
+  bonus: 0,
   result: 0,
   randomNum: 0,
   stage: WAIT,
@@ -115,7 +115,7 @@ const randomCard = computed(() => numToCard(game.randomNum));
 
 let guessTimer = null;
 
-watch(() => game.win, val => {
+watch(() => game.bonus, val => {
   if (val === 0) return;
   game.zoomWin = true;
   setTimeout(() => {
@@ -204,13 +204,13 @@ async function onPlayClick() {
     }
     game.stage = GUESS;
     game.result = res.times;
-    game.win = bet.value * res.times;
+    game.bonus = bet.value * res.times;
   }
 }
 
 function onResetClick() {
   if (game.stage === GUESS) {
-    game.total += game.win;
+    game.total += game.bonus;
   }
   Object.assign(game, getInitData());
 }
@@ -226,12 +226,12 @@ function guessBigOrSmall(isBig) {
   guessTimer = null;
   const tmpNum = game.randomNum % 13 || 13;
   if (tmpNum < 7 && isBig || tmpNum > 7 && !isBig) {
-    game.win = 0;
+    game.bonus = 0;
     setTimeout(onResetClick, 1000);
     return;
   }
   if (tmpNum !== 7) {
-    game.win *= 2;
+    game.bonus *= 2;
   }
   setTimeout(startGuessTimer, 1000);
 }

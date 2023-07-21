@@ -1,21 +1,21 @@
 <template>
   <div class="rule-area">
     <div
-      v-for="item in rules"
+      v-for="item in rulesList"
       :key="item.times"
       :class="{
         rule: true,
         blink: result === item.times
       }"
     >
-      <span>{{ item.title }}</span>
+      <span>{{ i18n(item.key) }}</span>
       <span>{{ item.times }}{{ i18n('times') }}</span>
     </div>
   </div>
 </template>
 
 <script setup>
-import { rules } from '../utils/rules.js';
+import { rulesList } from '../utils/rules.js';
 
 defineProps(['result']);
 
