@@ -37,10 +37,10 @@ const color = computed(() => {
   --icon-size: 36px;
   --back-size: 50px;
   &-mini {
-    --width: 30px;
-    --height: 50px;
-    --margin: 3px;
-    --radius: 2px;
+    --width: 40px;
+    --height: 58px;
+    --margin: 0px;
+    --radius: 4px;
     --pos: 1px;
     --text-size: 12px;
     --icon-size: 20px;

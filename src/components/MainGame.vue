@@ -55,17 +55,17 @@
         <button class="btn" :disabled="game.stage !== GUESS" @click="guessBigOrSmall(false)">{{ i18n('small') }}</button>
         <button
           class="btn"
-          :disabled="game.animating || game.stage > SECOND"
-          @click="onPlayClick"
-        >
-          {{ game.stage === WAIT ? i18n('roll') : i18n('change') }}
-        </button>
-        <button
-          class="btn"
           :disabled="game.animating || game.stage < GUESS"
           @click="onResetClick"
         >
           {{ game.stage === GUESS ? i18n('settle') : i18n('reset') }}
+        </button>
+        <button
+          class="btn"
+          :disabled="game.animating || game.stage > SECOND"
+          @click="onPlayClick"
+        >
+          {{ game.stage === WAIT ? i18n('roll') : i18n('change') }}
         </button>
       </div>
     </div>
@@ -220,6 +220,7 @@ function onResetClick() {
 }
 
 function startGuessTimer() {
+  if (game.stage !== GUESS) return;
   guessTimer = setInterval(() => {
     game.randomNum = Math.ceil(Math.random() * CARDS_COUNT);
   }, 125);
@@ -381,7 +382,6 @@ function judgeResult() {
       border-bottom: 1px solid var(--border-color);
       border-top: 0 none;
       align-items: center;
-      box-sizing: border-box;
       height: 60px;
       .card-wrapper {
         flex: 0 0 16%;
@@ -392,6 +392,7 @@ function judgeResult() {
       .btn {
         flex: 0 0 21%;
         height: 100%;
+        font-size: 16px;
       }
     }
   }
