@@ -57,7 +57,7 @@ const cn = {
   straight: '顺　子',
   three: '三　条',
   twopairs: '两　对',
-  onepair: '大于8一对',
+  onepair: '大于 8 一对',
   times: '倍',
 };
 

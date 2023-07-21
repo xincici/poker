@@ -57,6 +57,7 @@ const color = computed(() => {
   margin: var(--margin);
   background: #fafafa;
   color: #111;
+  cursor: pointer;
   &-red {
     color: #e00;
   }

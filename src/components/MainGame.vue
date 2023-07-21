@@ -305,7 +305,9 @@ function judgeResult() {
     border: 1px solid var(--border-color);
     color: #fff;
     font-weight: bold;
+    padding: 0;
     background: rgba(60, 160, 60, .9);
+    cursor: pointer;
     &:disabled {
       background: rgba(200, 200, 200, .9);
     }
@@ -314,14 +316,14 @@ function judgeResult() {
     border-bottom: 1px solid var(--border-color);
   }
   .game-area {
-    max-width: --var(max-width);
+    max-width: var(--max-width);
     margin: 0 auto;
     .money-area {
       display: flex;
       margin-top: 50px;
       border: 1px solid var(--border-color);
       > div {
-        flex: 1 0 32%;
+        flex: 1 0 33%;
         position: relative;
         text-align: right;
         line-height: 1.8;
@@ -331,14 +333,14 @@ function judgeResult() {
         padding: 18px 14px 2px;
         font-weight: bold;
         &:last-child {
-          flex: 1 0 36%;
+          flex: 1 0 34%;
           border-right: 0 none;
         }
         .title {
           position: absolute;
-          top: 1px;
-          left: 6px;
-          font-size: 13px;
+          top: 0px;
+          left: 5px;
+          font-size: 14px;
         }
         .money {
           display: inline-block;
@@ -383,6 +385,7 @@ function judgeResult() {
       border-top: 0 none;
       align-items: center;
       height: 60px;
+      margin-bottom: 50px;
       .card-wrapper {
         flex: 0 0 16%;
         display: flex;
@@ -392,7 +395,7 @@ function judgeResult() {
       .btn {
         flex: 0 0 21%;
         height: 100%;
-        font-size: 16px;
+        font-size: 15px;
       }
     }
   }
