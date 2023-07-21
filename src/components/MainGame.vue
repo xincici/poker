@@ -1,15 +1,15 @@
 <template>
-  <div class="wrapper" :class="theme">
+  <div class="wrapper">
     <TopHeader />
     <div class="game-area">
       <div class="money-area">
         <div>
           <span class="title">Total</span>
-          <span>{{ game.total }}</span>
+          <span class="money" :class="{zoom: game.zoomTotal}">{{ game.total }}</span>
         </div>
         <div>
           <span class="title">Win</span>
-          <span>{{ game.win }}</span>
+          <span class="money" :class="{zoom: game.zoomWin}">{{ game.win }}</span>
         </div>
         <div>
           <span class="title">Bet</span>
@@ -35,9 +35,9 @@
       </div>
       <div class="opt-area">
         <div class="opt-area-left">
-          <button class="btn">Big</button>
-          <CardItem :mini="true" num="Q" type="spade" />
-          <button class="btn">Small</button>
+          <button class="btn" :disabled="game.stage !== GUESS" @click="guessBigOrSmall(true)">Big</button>
+          <CardItem :mini="true" :num="NUMS[randomCard[0] - 1] || ''" :type="randomCard[1]" />
+          <button class="btn" :disabled="game.stage !== GUESS" @click="guessBigOrSmall(false)">Small</button>
         </div>
         <div class="opt-area-right">
           <button
@@ -67,8 +67,6 @@ import sampleSize from 'lodash.samplesize';
 import TopHeader from './TopHeader.vue';
 import RuleArea from './RuleArea.vue';
 import CardItem from './CardItem.vue';
-import { theme } from '../utils/theme.js';
-import confetti from '../utils/confetti.js';
 import { rules } from '../utils/rules.js';
 
 import { TOTAL_KEY, BET_KEY } from '../utils/constants.js';
@@ -87,10 +85,13 @@ const sleep = ms => new Promise(res => setTimeout(res, ms));
 const getInitData = () => ({
   win: 0,
   result: 0,
+  randomNum: 0,
   stage: WAIT,
   animating: false,
   cards: Array.from({ length: LEN }, () => (['', ''])),
   holds: new Array(LEN).fill(false),
+  zoomTotal: false,
+  zoomWin: false,
 });
 
 const game = reactive({
@@ -100,6 +101,32 @@ const game = reactive({
 });
 
 const curCards = computed(() => game.cards.map(cardToNum));
+const randomCard = computed(() => numToCard(game.randomNum));
+
+let guessTimer = null;
+
+watch(() => game.win, val => {
+  if (val === 0) return;
+  game.zoomWin = true;
+  setTimeout(() => {
+    game.zoomWin = false;
+  }, 600);
+});
+watch(() => game.total, val => {
+  game.zoomTotal = true;
+  setTimeout(() => {
+    game.zoomTotal = false;
+  }, 600);
+});
+
+watch(() => game.stage, val => {
+  if (val !== GUESS) {
+    if (guessTimer) clearInterval(guessTimer);
+    guessTimer = null;
+    return;
+  }
+  startGuessTimer();
+});
 
 watchEffect(() => {
   localStorage.setItem(TOTAL_KEY, game.total);
@@ -107,6 +134,7 @@ watchEffect(() => {
 });
 
 function numToCard(val) {
+  if (!val) return ['', ''];
   const num = val % 13 || 13;
   const type = TYPES[~~(val / 13.01)];
   return [ num, type ];
@@ -179,6 +207,27 @@ function onResetClick() {
   Object.assign(game, getInitData());
 }
 
+function startGuessTimer() {
+  guessTimer = setInterval(() => {
+    game.randomNum = Math.ceil(Math.random() * 52);
+  }, 125);
+}
+
+function guessBigOrSmall(isBig) {
+  clearInterval(guessTimer);
+  guessTimer = null;
+  const tmpNum = game.randomNum % 13 || 13;
+  if (tmpNum < 7 && isBig || tmpNum > 7 && !isBig) {
+    game.win = 0;
+    setTimeout(onResetClick, 1000);
+    return;
+  }
+  if (tmpNum !== 7) {
+    game.win *= 2;
+  }
+  setTimeout(startGuessTimer, 1000);
+}
+
 function judgeResult() {
   const ns = [];
   const ts = [];
@@ -218,16 +267,15 @@ function judgeResult() {
 </script>
 
 <style scoped lang="scss">
-.wrapper {
-  --border-color: #eee;
-  --text-color: #2c3e50;
-  --bg-color: #fff;
-  --mask-color: rgba(255, 255, 255, 0.8);
-  &.dark {
-    --border-color: #444;
-    --text-color: #eee;
-    --bg-color: #333;
-    --mask-color: rgba(20, 20, 20, 0.8);
+@keyframes zoom {
+  from {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(2.2);
+  }
+  to {
+    transform: scale(1);
   }
 }
 .wrapper {
@@ -279,6 +327,12 @@ function judgeResult() {
           top: 1px;
           left: 6px;
           font-size: 13px;
+        }
+        .money {
+          display: inline-block;
+          &.zoom {
+            animation: 0.5s ease-in-out 0s zoom;
+          }
         }
       }
     }

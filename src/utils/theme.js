@@ -20,5 +20,6 @@ export const toggle = () => {
 
 watchEffect(() => {
   localStorage.setItem(THEME_KEY, theme.value);
+  document.body.classList.toggle(DARK);
   document.querySelector('meta[name="theme-color"]').setAttribute('content', themeColor[theme.value]);
 });

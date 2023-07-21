@@ -44,7 +44,7 @@ const color = computed(() => {
     --pos: 1px;
     --text-size: 12px;
     --icon-size: 20px;
-    --back-size: 30px;
+    --back-size: 22px;
   }
 }
 .card {

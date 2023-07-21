@@ -4,7 +4,7 @@
  * @Description : 
  */
 
-module.exports = {
+export default {
   // other config
   rules: {
     'import/no-unresolved': ['error', { ignore: ['^virtual:'] }],
