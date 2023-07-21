@@ -14,7 +14,7 @@ const en = {
   tipLost: 'You Lose',
   total: 'Total',
   win: 'Win',
-  bet: 'Chip',
+  bet: 'Bet',
   big: 'Big',
   small: 'Small',
   roll: 'Roll',

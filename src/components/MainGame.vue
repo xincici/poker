@@ -13,7 +13,21 @@
         </div>
         <div>
           <span class="title">{{ i18n('bet') }}</span>
-          <span>{{ game.bet }}</span>
+          <button
+            @click="changeBet(-1)"
+            class="btn"
+            :disabled="bet === MIN_BET"
+          >
+            <i i-carbon-subtract-alt />
+          </button>
+          <span class="money">{{ bet }}</span>
+          <button
+            @click="changeBet(1)"
+            class="btn"
+            :disabled="bet === MAX_BET"
+          >
+            <i i-carbon-add-alt />
+          </button>
         </div>
       </div>
       <RuleArea :result="game.result" />
@@ -65,16 +79,15 @@ import sampleSize from 'lodash.samplesize';
 import TopHeader from './TopHeader.vue';
 import RuleArea from './RuleArea.vue';
 import CardItem from './CardItem.vue';
-import { times } from '../utils/rules.js';
+import { rulesList } from '../utils/rules.js';
+import { bet, changeBet, MIN_BET, MAX_BET } from '../utils/bet.js';
 
 import { TOTAL_KEY, BET_KEY } from '../utils/constants.js';
 const LEN = 5;
-
-const initTotal = ref(+localStorage.getItem(TOTAL_KEY) || 1000);
-const initBet = ref(+localStorage.getItem(BET_KEY) || 10);
+const CARDS_COUNT = 13 * 4;
 
 const [ WAIT, FIRST, SECOND, GUESS, LOSE ] = [0, 1, 2, 3, 4];
-const ALL_CARDS = new Array(13 * 4).fill(1).map((_, i) => i + 1);
+const ALL_CARDS = new Array(CARDS_COUNT).fill(1).map((_, i) => i + 1);
 const NUMS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 const TYPES = ['heart', 'diamond', 'spade', 'club'];
 
@@ -93,8 +106,7 @@ const getInitData = () => ({
 });
 
 const game = reactive({
-  total: initTotal.value,
-  bet: initBet.value,
+  total: +localStorage.getItem(TOTAL_KEY) || 1000,
   ...getInitData(),
 });
 
@@ -128,7 +140,6 @@ watch(() => game.stage, val => {
 
 watchEffect(() => {
   localStorage.setItem(TOTAL_KEY, game.total);
-  localStorage.setItem(BET_KEY, game.bet);
 });
 
 function numToCard(val) {
@@ -144,9 +155,9 @@ function cardToNum(card) {
 }
 
 function randomOne(all) {
-  if (all) return Math.ceil(Math.random() * 52);
+  if (all) return Math.ceil(Math.random() * CARDS_COUNT);
   while (true) {
-    const val = Math.ceil(Math.random() * 52);
+    const val = Math.ceil(Math.random() * CARDS_COUNT);
     if (!curCards.value.includes(val)) return val;
   }
 }
@@ -161,10 +172,10 @@ async function onPlayClick() {
   if (game.stage > SECOND) return;
   game.animating = true;
   if (game.stage === WAIT) {
-    if (game.total >= game.bet) {
-      game.total -= game.bet;
+    if (game.total >= bet.value) {
+      game.total -= bet.value;
     } else {
-      game.bet = game.total;
+      bet.value = game.total;
       game.total = 0;
     }
     game.cards = Array.from({ length: LEN }, () => (['', '']));
@@ -192,8 +203,8 @@ async function onPlayClick() {
       return;
     }
     game.stage = GUESS;
-    game.result = res;
-    game.win = game.bet * res;
+    game.result = res.times;
+    game.win = bet.value * res.times;
   }
 }
 
@@ -206,7 +217,7 @@ function onResetClick() {
 
 function startGuessTimer() {
   guessTimer = setInterval(() => {
-    game.randomNum = Math.ceil(Math.random() * 52);
+    game.randomNum = Math.ceil(Math.random() * CARDS_COUNT);
   }, 125);
 }
 
@@ -233,27 +244,27 @@ function judgeResult() {
     ts.push(card[1]);
   });
   if (new Set(ts).size === 1) {
-    if (ns[4] - ns[0] === 4 || ns[0] === 1 && ns[1] === 10) return times[0]; // 同花顺
-    return times[4]; // 同花
+    if (ns[4] - ns[0] === 4 || ns[0] === 1 && ns[1] === 10) return rulesList[0]; // 同花顺
+    return rulesList[3]; // 同花
   }
   ns.sort((a, b) => a - b);
   switch (new Set(ns).size) {
     case 5:
-      if (ns[4] - ns[0] === 4 || ns[0] === 1 && ns[1] === 10) return times[3]; // 顺子
+      if (ns[4] - ns[0] === 4 || ns[0] === 1 && ns[1] === 10) return rulesList[4]; // 顺子
       return 0; // 什么也不是
     case 2:
-      if (ns[0] === ns[3] || ns[1] === ns[4]) return times[1]; // 四条
+      if (ns[0] === ns[3] || ns[1] === ns[4]) return rulesList[1]; // 四条
       if ( 
         ns[0] === ns[2] && ns[3] === ns[4] || ns[0] === ns[1] && ns[2] === ns[4]
-      ) return times[2]; // 葫芦
+      ) return rulesList[2]; // 葫芦
     case 3:
       if (
         ns[0] === ns[2] || ns[1] === ns[3] || ns[2] === ns[4]
-      ) return times[5] // 三条
-      return times[6]; // 两对
+      ) return rulesList[5] // 三条
+      return rulesList[6]; // 两对
     case 4:
       for (let i = 1; i < LEN; i++) {
-        if (ns[i] === ns[i - 1] && (ns[i] === 1 || ns[i] >= 8)) return times[7];
+        if (ns[i] === ns[i - 1] && (ns[i] === 1 || ns[i] >= 8)) return rulesList[7];
       }
       return 0;
     default:
@@ -297,14 +308,14 @@ function judgeResult() {
     border-bottom: 1px solid var(--border-color);
   }
   .game-area {
-    max-width: 500px;
+    max-width: --var(max-width);
     margin: 0 auto;
     .money-area {
       display: flex;
       margin-top: 50px;
       border: 1px solid var(--border-color);
       > div {
-        flex: 1 0 30%;
+        flex: 1 0 32%;
         position: relative;
         text-align: right;
         line-height: 1.8;
@@ -314,7 +325,7 @@ function judgeResult() {
         padding: 18px 14px 2px;
         font-weight: bold;
         &:last-child {
-          flex: 1 0 40%;
+          flex: 1 0 36%;
           border-right: 0 none;
         }
         .title {
@@ -325,9 +336,15 @@ function judgeResult() {
         }
         .money {
           display: inline-block;
+          margin: 0 5px;
           &.zoom {
             animation: 0.5s ease-in-out 0s zoom;
           }
+        }
+        .btn {
+          border: 1px solid var(--border-color);
+          border-radius: 3px;
+          padding: 5px 3px;
         }
       }
     }

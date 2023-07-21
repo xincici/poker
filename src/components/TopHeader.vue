@@ -25,7 +25,7 @@ import { isDark, toggle as toggleTheme } from '../utils/theme';
 
 <style scoped lang="scss">
 .header-wrapper {
-  max-width: 500px;
+  max-width: var(--max-width);
   margin: 0 auto;
   padding: 10px 8px;
   box-sizing: border-box;

@@ -23,6 +23,7 @@ body {
   --text-color: #2c3e50;
   --bg-color: #fff;
   --mask-color: rgba(255, 255, 255, 0.8);
+  --max-width: 480px;
   &.dark {
     --border-color: #444;
     --text-color: #eee;

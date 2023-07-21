@@ -6,30 +6,21 @@
 import { ref, watch } from 'vue';
 import { i18n, language } from '../plugins/i18n.js';
 
-export const times = [
-  250,
-  60,
-  20,
-  10,
-  7,
-  5,
-  2,
-  1
+export const rulesList = [
+  { times: 250, key: 'straightflush' },
+  { times: 60, key: 'four'},
+  { times: 20, key: 'fullhouse'},
+  { times: 10, key: 'flush'},
+  { times: 7, key: 'straight'},
+  { times: 5, key: 'three'},
+  { times: 2, key: 'twopairs'},
+  { times: 1, key: 'onepair'},
 ];
 
 function getRules() {
-  return [
-    i18n('straightflush'),
-    i18n('four'),
-    i18n('fullhouse'),
-    i18n('flush'),
-    i18n('straight'),
-    i18n('three'),
-    i18n('twopairs'),
-    i18n('onepair'),
-  ].map((title, idx) => ({
-    title,
-    times: times[idx],
+  return rulesList.map(item => ({
+    title: i18n(item.key),
+    times: item.times, 
   }));
 }
 
