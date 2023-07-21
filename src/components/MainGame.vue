@@ -65,7 +65,7 @@ import sampleSize from 'lodash.samplesize';
 import TopHeader from './TopHeader.vue';
 import RuleArea from './RuleArea.vue';
 import CardItem from './CardItem.vue';
-import { rules } from '../utils/rules.js';
+import { times } from '../utils/rules.js';
 
 import { TOTAL_KEY, BET_KEY } from '../utils/constants.js';
 const LEN = 5;
@@ -187,14 +187,13 @@ async function onPlayClick() {
   game.stage++;
   if (game.stage === SECOND) {
     const res = judgeResult();
-    console.log({ res });
     if (!res) {
       game.stage = LOSE;
       return;
     }
     game.stage = GUESS;
-    game.result = res.times;
-    game.win = game.bet * res.times;
+    game.result = res;
+    game.win = game.bet * res;
   }
 }
 
@@ -234,27 +233,27 @@ function judgeResult() {
     ts.push(card[1]);
   });
   if (new Set(ts).size === 1) {
-    if (ns[4] - ns[0] === 4 || ns[0] === 1 && ns[1] === 10) return rules[0]; // 同花顺
-    return rules[4]; // 同花
+    if (ns[4] - ns[0] === 4 || ns[0] === 1 && ns[1] === 10) return times[0]; // 同花顺
+    return times[4]; // 同花
   }
   ns.sort((a, b) => a - b);
   switch (new Set(ns).size) {
     case 5:
-      if (ns[4] - ns[0] === 4 || ns[0] === 1 && ns[1] === 10) return rules[3]; // 顺子
+      if (ns[4] - ns[0] === 4 || ns[0] === 1 && ns[1] === 10) return times[3]; // 顺子
       return 0; // 什么也不是
     case 2:
-      if (ns[0] === ns[3] || ns[1] === ns[4]) return rules[1]; // 四条
+      if (ns[0] === ns[3] || ns[1] === ns[4]) return times[1]; // 四条
       if ( 
         ns[0] === ns[2] && ns[3] === ns[4] || ns[0] === ns[1] && ns[2] === ns[4]
-      ) return rules[2]; // 葫芦
+      ) return times[2]; // 葫芦
     case 3:
       if (
         ns[0] === ns[2] || ns[1] === ns[3] || ns[2] === ns[4]
-      ) return rules[5] // 三条
-      return rules[6]; // 两对
+      ) return times[5] // 三条
+      return times[6]; // 两对
     case 4:
       for (let i = 1; i < LEN; i++) {
-        if (ns[i] === ns[i - 1] && (ns[i] === 1 || ns[i] >= 8)) return rules[7];
+        if (ns[i] === ns[i - 1] && (ns[i] === 1 || ns[i] >= 8)) return times[7];
       }
       return 0;
     default:
