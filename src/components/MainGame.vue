@@ -4,15 +4,15 @@
     <div class="game-area">
       <div class="money-area">
         <div>
-          <span class="title">Total</span>
+          <span class="title">{{ i18n('total') }}</span>
           <span class="money" :class="{zoom: game.zoomTotal}">{{ game.total }}</span>
         </div>
         <div>
-          <span class="title">Win</span>
+          <span class="title">{{ i18n('win') }}</span>
           <span class="money" :class="{zoom: game.zoomWin}">{{ game.win }}</span>
         </div>
         <div>
-          <span class="title">Bet</span>
+          <span class="title">{{ i18n('bet') }}</span>
           <span>{{ game.bet }}</span>
         </div>
       </div>
@@ -34,27 +34,25 @@
         </div>
       </div>
       <div class="opt-area">
-        <div class="opt-area-left">
-          <button class="btn" :disabled="game.stage !== GUESS" @click="guessBigOrSmall(true)">Big</button>
+        <button class="btn" :disabled="game.stage !== GUESS" @click="guessBigOrSmall(true)">{{ i18n('big') }}</button>
+        <span class="card-wrapper">
           <CardItem :mini="true" :num="NUMS[randomCard[0] - 1] || ''" :type="randomCard[1]" />
-          <button class="btn" :disabled="game.stage !== GUESS" @click="guessBigOrSmall(false)">Small</button>
-        </div>
-        <div class="opt-area-right">
-          <button
-            class="btn"
-            :disabled="game.animating || game.stage > SECOND"
-            @click="onPlayClick"
-          >
-            {{ game.stage === WAIT ? 'Roll' : 'Change' }}
-          </button>
-          <button
-            class="btn"
-            :disabled="game.animating || game.stage < GUESS"
-            @click="onResetClick"
-          >
-            {{ game.stage === GUESS ? 'Settle' : 'Reset' }}
-          </button>
-        </div>
+        </span>
+        <button class="btn" :disabled="game.stage !== GUESS" @click="guessBigOrSmall(false)">{{ i18n('small') }}</button>
+        <button
+          class="btn"
+          :disabled="game.animating || game.stage > SECOND"
+          @click="onPlayClick"
+        >
+          {{ game.stage === WAIT ? i18n('roll') : i18n('change') }}
+        </button>
+        <button
+          class="btn"
+          :disabled="game.animating || game.stage < GUESS"
+          @click="onResetClick"
+        >
+          {{ game.stage === GUESS ? i18n('settle') : i18n('reset') }}
+        </button>
       </div>
     </div>
   </div>
@@ -287,10 +285,8 @@ function judgeResult() {
   background: var(--bg-color);
   overflow-y: auto;
   .btn {
-    padding: 8px 12px;
     text-align: center;
     border: 1px solid var(--border-color);
-    border-radius: 4px;
     color: #fff;
     font-weight: bold;
     background: rgba(60, 160, 60, .9);
@@ -360,19 +356,21 @@ function judgeResult() {
     }
     .opt-area {
       display: flex;
-      border: 1px solid var(--border-color);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
       border-top: 0 none;
-      &-left,&-right {
-        flex: 1 0 45%;
+      align-items: center;
+      box-sizing: border-box;
+      height: 60px;
+      .card-wrapper {
+        flex: 0 0 16%;
         display: flex;
         align-items: center;
-        justify-content: space-around;
-        box-sizing: border-box;
-        padding: 16px 10px;
+        justify-content: center;
       }
-      &-left {
-        border-right: 1px solid var(--border-color);
-        flex: 1 0 55%;
+      .btn {
+        flex: 0 0 21%;
+        height: 100%;
       }
     }
   }

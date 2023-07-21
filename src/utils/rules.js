@@ -3,15 +3,24 @@
  * @Created At  : 2023-07-20 17:10:59
  * @Description : 
  */
+import { ref, watch } from 'vue';
+import { i18n, language } from '../plugins/i18n.js';
 
-export const rules = [
-  { title: '同花顺', times: 250 },
-  { title: '四条', times: 60 },
-  { title: '葫芦', times: 20 },
-  { title: '顺子', times: 10 },
-  { title: '同花', times: 7 },
-  { title: '三条', times: 5 },
-  { title: '两对', times: 2 },
-  { title: '大于8一对', times: 1 },
-];
+function getRules() {
+  return [
+    { title: i18n('straightflush'), times: 250 },
+    { title: i18n('four'), times: 60 },
+    { title: i18n('fullhouse'), times: 20 },
+    { title: i18n('flush'), times: 10 },
+    { title: i18n('straight'), times: 7 },
+    { title: i18n('three'), times: 5 },
+    { title: i18n('twopairs'), times: 2 },
+    { title: i18n('onepair'), times: 1 },
+  ];
+}
 
+export const rules = ref(getRules());
+
+watch(language, () => {
+  rules.value = getRules();
+});

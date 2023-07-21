@@ -9,7 +9,7 @@
       }"
     >
       <span>{{ item.title }}</span>
-      <span>{{ item.times }}倍</span>
+      <span>{{ item.times }}{{ i18n('times') }}</span>
     </div>
   </div>
 </template>
