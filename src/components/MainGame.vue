@@ -3,9 +3,18 @@
     <TopHeader />
     <div class="game-area">
       <div class="money-area">
-        <div><span class="title">Total</span>{{ game.total }}</div>
-        <div><span class="title">Win</span>{{ game.win }}</div>
-        <div><span class="title">Bet</span>{{ game.bet }}</div>
+        <div>
+          <span class="title">Total</span>
+          <span>{{ game.total }}</span>
+        </div>
+        <div>
+          <span class="title">Win</span>
+          <span>{{ game.win }}</span>
+        </div>
+        <div>
+          <span class="title">Bet</span>
+          <span>{{ game.bet }}</span>
+        </div>
       </div>
       <RuleArea :result="game.result" />
       <div class="card-area">
@@ -25,8 +34,9 @@
         </div>
       </div>
       <div class="opt-area">
-        <div class="opt-area-left" hidden>
+        <div class="opt-area-left">
           <button class="btn">Big</button>
+          <CardItem :mini="true" num="Q" type="spade" />
           <button class="btn">Small</button>
         </div>
         <div class="opt-area-right">
@@ -212,12 +222,12 @@ function judgeResult() {
   --border-color: #eee;
   --text-color: #2c3e50;
   --bg-color: #fff;
-  --mask-color: #f1f1f1;
+  --mask-color: rgba(255, 255, 255, 0.8);
   &.dark {
     --border-color: #444;
     --text-color: #eee;
     --bg-color: #333;
-    --mask-color: #222;
+    --mask-color: rgba(20, 20, 20, 0.8);
   }
 }
 .wrapper {
@@ -229,8 +239,7 @@ function judgeResult() {
   background: var(--bg-color);
   overflow-y: auto;
   .btn {
-    padding: 8px 0;
-    width: 70px;
+    padding: 8px 12px;
     text-align: center;
     border: 1px solid var(--border-color);
     border-radius: 4px;
@@ -238,7 +247,7 @@ function judgeResult() {
     font-weight: bold;
     background: rgba(60, 160, 60, .9);
     &:disabled {
-      background: rgba(150, 200, 150, .4);
+      background: rgba(200, 200, 200, .9);
     }
   }
   .header-wrapper {
@@ -251,7 +260,7 @@ function judgeResult() {
       display: flex;
       margin-top: 50px;
       border: 1px solid var(--border-color);
-      div {
+      > div {
         flex: 1 0 30%;
         position: relative;
         text-align: right;
@@ -259,7 +268,7 @@ function judgeResult() {
         box-sizing: border-box;
         border-right: 1px solid var(--border-color);
         font-size: 15px;
-        padding: 15px 15px 2px;
+        padding: 18px 14px 2px;
         font-weight: bold;
         &:last-child {
           flex: 1 0 40%;
@@ -287,7 +296,6 @@ function judgeResult() {
         height: 100%;
         color: #1a1;
         font-weight: bold;
-        opacity: 0.9;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -300,13 +308,17 @@ function judgeResult() {
       display: flex;
       border: 1px solid var(--border-color);
       border-top: 0 none;
+      &-left,&-right {
+        flex: 1 0 45%;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        box-sizing: border-box;
+        padding: 16px 10px;
+      }
       &-left {
         border-right: 1px solid var(--border-color);
-      }
-      &-left,&-right {
-        flex: 1 0 50%;
-        box-sizing: border-box;
-        padding: 18px 12px;
+        flex: 1 0 55%;
       }
     }
   }

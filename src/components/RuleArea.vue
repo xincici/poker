@@ -3,8 +3,8 @@
     <div
       v-for="item in rules"
       :key="item.times"
-      class="rule"
       :class="{
+        rule: true,
         blink: result === item.times
       }"
     >
@@ -34,12 +34,12 @@ defineProps(['result']);
 .rule-area {
   display: flex;
   flex-wrap: wrap;
-  padding: 20px 0;
+  padding: 15px 0;
   border: 1px solid var(--border-color);
   border-top: 0 none;
   .rule {
     flex: 1 0 50%;
-    line-height: 1.6;
+    line-height: 1.8;
     display: flex;
     padding: 0;
     box-sizing: border-box;

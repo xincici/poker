@@ -1,5 +1,8 @@
 <template>
-  <span class="card" :class="`card-${color} ${hold ? 'card-hold' : ''}`">
+  <span
+    class="card"
+    :class="`card-${color} ${hold ? 'card-hold' : ''} ${mini ? 'card-mini' : ''}`"
+  >
     <span class="card-num card-num-top" v-if="num">{{ num }}</span>
     <span class="card-num card-num-bottom" v-if="num">{{ num }}</span>
     <span class="card-type">
@@ -25,13 +28,33 @@ const color = computed(() => {
 
 <style scoped lang="scss">
 .card {
+  --width: 60px;
+  --height: 100px;
+  --margin: 4px;
+  --radius: 5px;
+  --pos: 3px;
+  --text-size: 16px;
+  --icon-size: 36px;
+  --back-size: 50px;
+  &-mini {
+    --width: 30px;
+    --height: 50px;
+    --margin: 3px;
+    --radius: 2px;
+    --pos: 1px;
+    --text-size: 12px;
+    --icon-size: 20px;
+    --back-size: 30px;
+  }
+}
+.card {
   display: inline-block;
   position: relative;
-  width: 60px;
-  height: 100px;
+  width: var(--width);
+  height: var(--height);
   border: 1px solid var(--border-color);
-  border-radius: 5px;
-  margin: 4px;
+  border-radius: var(--radius);
+  margin: var(--margin);
   background: #fafafa;
   color: #111;
   &-red {
@@ -42,15 +65,15 @@ const color = computed(() => {
   }
   &-num {
     position: absolute;
-    font-size: 16px;
+    font-size: var(--text-size);
     font-weight: bold;
     &-top {
-      top: 3px;
-      left: 3px;
+      top: var(--pos);
+      left: var(--pos);
     }
     &-bottom {
-      bottom: 3px;
-      right: 3px;
+      bottom: var(--pos);
+      right: var(--pos);
       transform: rotate(180deg);
     }
   }
@@ -58,11 +81,11 @@ const color = computed(() => {
     position: absolute;
     top: 50%;
     left: 50%;
-    font-size: 36px;
+    font-size: var(--icon-size);
     font-weight: bold;
     transform: translate(-50%, -50%);
     &-back {
-      font-size: 50px;
+      font-size: var(--back-size);
     }
   }
 }
