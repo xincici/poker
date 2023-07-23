@@ -2,6 +2,7 @@
   <div class="wrapper">
     <TopHeader />
     <div class="game-area">
+      <RuleArea :result="game.result" />
       <div class="money-area">
         <div>
           <span class="title">{{ i18n('total') }}</span>
@@ -30,7 +31,6 @@
           </button>
         </div>
       </div>
-      <RuleArea :result="game.result" />
       <div class="card-area">
         <CardItem
           v-for="(card, idx) in game.cards"
@@ -40,18 +40,47 @@
           :hold="game.holds[idx]"
           @click="onCardClick(idx)"
         />
-        <div class="result-win" v-if="game.stage === GUESS">
+        <div class="result-win" v-if="game.stage === GUESS || game.stage === GUESS_LOSE">
           🎉🎉 {{ i18n('tipWin') }} 🎉🎉
         </div>
         <div class="result-lose" v-if="game.stage === LOSE">
           👻👻 {{ i18n('tipLost') }} 👻👻
         </div>
       </div>
+      <div class="guess-area">
+        <div class="guess-list">
+          <div
+            v-for="([num, type, isBig, isWin], idx) in game.guesses"
+            :key="idx"
+            class="guess-item"
+          >
+            <CardItem
+              :mini="true"
+              :num="NUMS[num - 1] || ''"
+              :type="type"
+            />
+            <span
+              :class="{
+                'guess-result': true,
+                'guess-win': isWin > 0,
+                'guess-tie': isWin === 0,
+                'guess-lose': isWin < 0,
+              }"
+            >
+              {{ i18n(isBig ? 'big' : 'small') }}
+            </span>
+          </div>
+        </div>
+        <div class="card-wrapper">
+          <CardItem
+            :mini="true"
+            :num="NUMS[randomCard[0] - 1] || ''"
+            :type="randomCard[1]"
+          />
+        </div>
+      </div>
       <div class="opt-area">
         <button class="btn" :disabled="game.stage !== GUESS" @click="guessBigOrSmall(true)">{{ i18n('big') }}</button>
-        <span class="card-wrapper">
-          <CardItem :mini="true" :num="NUMS[randomCard[0] - 1] || ''" :type="randomCard[1]" />
-        </span>
         <button class="btn" :disabled="game.stage !== GUESS" @click="guessBigOrSmall(false)">{{ i18n('small') }}</button>
         <button
           class="btn"
@@ -87,7 +116,7 @@ const LEN = 5;
 const CARDS_COUNT = 13 * 4;
 const DEFAULT_TOTAL = 1000;
 
-const [ WAIT, FIRST, SECOND, GUESS, LOSE ] = [0, 1, 2, 3, 4];
+const [ WAIT, FIRST, SECOND, GUESS, LOSE, GUESS_LOSE ] = [0, 1, 2, 3, 4, 5];
 const ALL_CARDS = new Array(CARDS_COUNT).fill(1).map((_, i) => i + 1);
 const NUMS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 const TYPES = ['heart', 'diamond', 'spade', 'club'];
@@ -102,6 +131,7 @@ const getInitData = () => ({
   animating: false,
   cards: Array.from({ length: LEN }, () => (['', ''])),
   holds: new Array(LEN).fill(false),
+  guesses: [],
   zoomTotal: false,
   zoomWin: false,
 });
@@ -228,18 +258,23 @@ function startGuessTimer() {
 
 function guessBigOrSmall(isBig) {
   if (!guessTimer) return;
-  clearInterval(guessTimer);
-  guessTimer = null;
-  const tmpNum = game.randomNum % 13 || 13;
+  const [ tmpNum, tmpType ] = numToCard(game.randomNum);
+  console.log({ tmpNum, tmpType });
+  let isWin = -1;
   if (tmpNum < 7 && isBig || tmpNum > 7 && !isBig) {
     game.bonus = 0;
-    setTimeout(onResetClick, 1200);
-    return;
+    clearInterval(guessTimer);
+    game.stage = GUESS_LOSE;
+    game.result = 0;
+    game.randomNum = 0;
+  } else {
+    isWin = 0;
+    if (tmpNum !== 7) {
+      game.bonus *= 2;
+      isWin = 1;
+    }
   }
-  if (tmpNum !== 7) {
-    game.bonus *= 2;
-  }
-  setTimeout(startGuessTimer, 1200);
+  game.guesses.push([ tmpNum, tmpType, isBig, isWin ]);
 }
 
 function judgeResult() {
@@ -320,8 +355,8 @@ function judgeResult() {
     margin: 0 auto;
     .money-area {
       display: flex;
-      margin-top: 50px;
       border: 1px solid var(--border-color);
+      border-top: 0 none;
       > div {
         flex: 1 0 33%;
         position: relative;
@@ -330,7 +365,7 @@ function judgeResult() {
         box-sizing: border-box;
         border-right: 1px solid var(--border-color);
         font-size: 15px;
-        padding: 18px 14px 2px;
+        padding: 22px 10px 2px;
         font-weight: bold;
         &:last-child {
           flex: 1 0 34%;
@@ -357,7 +392,7 @@ function judgeResult() {
       }
     }
     .card-area {
-      padding: 30px 0;
+      padding: 25px 0;
       border: 1px solid var(--border-color);
       border-top: 0 none;
       position: relative;
@@ -378,6 +413,38 @@ function judgeResult() {
         color: #a11;
       }
     }
+    .guess-area {
+      padding: 10px 0 20px;
+      text-align: left;
+      overflow-x: auto;
+      .guess-list {
+        display: inline-block;
+        .guess-item {
+          position: relative;
+          display: inline-block;
+          .guess-result {
+            position: absolute;
+            bottom: -14px;
+            left: 50%;
+            font-size: 12px;
+            font-weight: bold;
+            transform: translateX(-8px);
+            &.guess-win {
+              color: #1f1;
+            }
+            &.guess-lose {
+              color: #f11;
+            }
+            &.guess-tie {
+              color: var(--text-color);
+            }
+          }
+          .card-wrapper {
+            display: inline-block;
+          }
+        }
+      }
+    }
     .opt-area {
       display: flex;
       border-top: 1px solid var(--border-color);
@@ -386,16 +453,10 @@ function judgeResult() {
       align-items: center;
       height: 60px;
       margin-bottom: 50px;
-      .card-wrapper {
-        flex: 0 0 16%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
       .btn {
-        flex: 0 0 21%;
+        flex: 0 0 25%;
         height: 100%;
-        font-size: 15px;
+        font-size: 16px;
       }
     }
   }
