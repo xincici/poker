@@ -30,7 +30,7 @@ const color = computed(() => {
 .card {
   --width: 60px;
   --height: 100px;
-  --margin: 3px;
+  --margin: 4px;
   --radius: 5px;
   --pos: 3px;
   --text-size: 16px;

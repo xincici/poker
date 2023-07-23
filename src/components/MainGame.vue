@@ -414,17 +414,19 @@ function judgeResult() {
       }
     }
     .guess-area {
-      padding: 10px 0 20px;
+      padding: 10px 0 25px;
       text-align: left;
       overflow-x: auto;
+      font-size: 0;
       .guess-list {
         display: inline-block;
         .guess-item {
           position: relative;
           display: inline-block;
+          font-size: 0;
           .guess-result {
             position: absolute;
-            bottom: -14px;
+            bottom: -20px;
             left: 50%;
             font-size: 12px;
             font-weight: bold;
@@ -439,10 +441,10 @@ function judgeResult() {
               color: var(--text-color);
             }
           }
-          .card-wrapper {
-            display: inline-block;
-          }
         }
+      }
+      .card-wrapper {
+        display: inline-block;
       }
     }
     .opt-area {
