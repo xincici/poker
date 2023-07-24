@@ -17,7 +17,7 @@
           <button
             @click="changeBet(-1)"
             class="btn"
-            :disabled="bet === MIN_BET"
+            :disabled="bet === MIN_BET || game.stage > WAIT"
           >
             <i i-carbon-subtract-alt />
           </button>
@@ -25,7 +25,7 @@
           <button
             @click="changeBet(1)"
             class="btn"
-            :disabled="bet === MAX_BET"
+            :disabled="bet === MAX_BET || game.stage > WAIT"
           >
             <i i-carbon-add-alt />
           </button>
