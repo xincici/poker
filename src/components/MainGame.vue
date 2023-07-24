@@ -396,6 +396,7 @@ function judgeResult() {
       border: 1px solid var(--border-color);
       border-top: 0 none;
       position: relative;
+      font-size: 0;
       .result-win,.result-lose {
         background: var(--mask-color);
         position: absolute;
@@ -417,6 +418,8 @@ function judgeResult() {
       padding: 10px 0 25px;
       text-align: left;
       overflow-x: auto;
+      border: 1px solid var(--border-color);
+      border-top: 0 none;
       font-size: 0;
       .guess-list {
         display: inline-block;
@@ -449,8 +452,7 @@ function judgeResult() {
     }
     .opt-area {
       display: flex;
-      border-top: 1px solid var(--border-color);
-      border-bottom: 1px solid var(--border-color);
+      border: 1px solid var(--border-color);
       border-top: 0 none;
       align-items: center;
       height: 60px;
