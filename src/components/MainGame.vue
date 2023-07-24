@@ -47,7 +47,7 @@
           👻👻 {{ i18n('tipLost') }} 👻👻
         </div>
       </div>
-      <div class="guess-area">
+      <div class="guess-area" ref="guessArea">
         <div class="guess-list">
           <div
             v-for="([num, type, isBig, isWin], idx) in game.guesses"
@@ -154,6 +154,8 @@ const getInitData = () => ({
   zoomTotal: false, // 总资产金额变化时候 zoom 提示
   zoomWin: false, // 奖金金额变化时 zoom 提示
 });
+
+const guessArea = ref(null);
 
 // 游戏状态数据
 const game = reactive({
@@ -299,37 +301,47 @@ function guessBigOrSmall(isBig) {
     }
   }
   game.guesses.push([ tmpNum, tmpType, isBig, isWin ]);
+  guessArea.value.scrollTo(1000, 0);
 }
 
 function judgeResult() {
   const ns = [];
-  const ts = [];
+  const ts = new Set([]);
   game.cards.forEach(card => {
     ns.push(card[0]);
-    ts.push(card[1]);
+    ts.add(card[1]);
   });
   ns.sort((a, b) => a - b);
-  if (new Set(ts).size === 1) {
-    if (ns[4] - ns[0] === 4 || ns[0] === 1 && ns[1] === 10) return rulesList[0]; // 同花顺
+  const [ n1, n2, n3, n4, n5 ] = ns;
+  if (ts.size === 1) {
+    if (
+      n5 - n1 === 4 || n1 === 1 && n2 === 10
+    ) return rulesList[0]; // 同花顺
     return rulesList[3]; // 同花
   }
   switch (new Set(ns).size) {
     case 5:
-      if (ns[4] - ns[0] === 4 || ns[0] === 1 && ns[1] === 10) return rulesList[4]; // 顺子
+      if (
+        n5 - n1 === 4 || n1 === 1 && n2 === 10
+      ) return rulesList[4]; // 顺子
       return 0; // 什么也不是
     case 2:
-      if (ns[0] === ns[3] || ns[1] === ns[4]) return rulesList[1]; // 四条
-      if ( 
-        ns[0] === ns[2] && ns[3] === ns[4] || ns[0] === ns[1] && ns[2] === ns[4]
+      if (
+        n1 === n4 || n2 === n5
+      ) return rulesList[1]; // 四条
+      if (
+        n1 === n3 && n4 === n5 || n1 === n2 && n3 === n5
       ) return rulesList[2]; // 葫芦
     case 3:
       if (
-        ns[0] === ns[2] || ns[1] === ns[3] || ns[2] === ns[4]
+        n1 === n3 || n2 === n4 || n3 === n5
       ) return rulesList[5] // 三条
       return rulesList[6]; // 两对
     case 4:
       for (let i = 1; i < LEN; i++) {
-        if (ns[i] === ns[i - 1] && (ns[i] === 1 || ns[i] >= 8)) return rulesList[7];
+        if (
+          ns[i] === ns[i - 1] && (ns[i] === 1 || ns[i] >= 8)
+        ) return rulesList[7]; // 大于 8 一对
       }
       return 0;
     default:
@@ -446,8 +458,10 @@ function judgeResult() {
       border: 1px solid var(--border-color);
       border-top: 0 none;
       font-size: 0;
+      white-space: nowrap;
       .guess-list {
         display: inline-block;
+        white-space: nowrap;
         .guess-item {
           position: relative;
           display: inline-block;
