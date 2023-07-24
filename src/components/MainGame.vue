@@ -17,7 +17,7 @@
           <button
             @click="changeBet(-1)"
             class="btn"
-            :disabled="bet === MIN_BET || game.stage > WAIT"
+            :disabled="bet === MIN_BET || game.stage > WAIT || game.animating"
           >
             <i i-carbon-subtract-alt />
           </button>
@@ -25,7 +25,7 @@
           <button
             @click="changeBet(1)"
             class="btn"
-            :disabled="bet === MAX_BET || game.stage > WAIT"
+            :disabled="bet === MAX_BET || game.stage > WAIT || game.animating"
           >
             <i i-carbon-add-alt />
           </button>
@@ -80,8 +80,20 @@
         </div>
       </div>
       <div class="opt-area">
-        <button class="btn" :disabled="game.stage !== GUESS" @click="guessBigOrSmall(true)">{{ i18n('big') }}</button>
-        <button class="btn" :disabled="game.stage !== GUESS" @click="guessBigOrSmall(false)">{{ i18n('small') }}</button>
+        <button
+          class="btn"
+          :disabled="game.stage !== GUESS"
+          @click="guessBigOrSmall(true)"
+        >
+          {{ i18n('big') }}
+        </button>
+        <button
+          class="btn"
+          :disabled="game.stage !== GUESS"
+          @click="guessBigOrSmall(false)"
+        >
+          {{ i18n('small') }}
+        </button>
         <button
           class="btn"
           :disabled="game.animating || game.stage < LOSE"
