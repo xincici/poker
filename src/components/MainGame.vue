@@ -40,7 +40,7 @@
           :hold="game.holds[idx]"
           @click="onCardClick(idx)"
         />
-        <div class="result-win" v-if="game.stage === GUESS || game.stage === GUESS_LOSE">
+        <div class="result-win" v-if="game.stage >= GUESS">
           🎉🎉 {{ i18n('tipWin') }} 🎉🎉
         </div>
         <div class="result-lose" v-if="game.stage === LOSE">
@@ -84,7 +84,7 @@
         <button class="btn" :disabled="game.stage !== GUESS" @click="guessBigOrSmall(false)">{{ i18n('small') }}</button>
         <button
           class="btn"
-          :disabled="game.animating || game.stage < GUESS"
+          :disabled="game.animating || game.stage < LOSE"
           @click="onResetClick"
         >
           {{ game.stage === GUESS ? i18n('settle') : i18n('reset') }}
@@ -114,36 +114,47 @@ import { bet, changeBet, MIN_BET, MAX_BET } from '../utils/bet.js';
 import { TOTAL_KEY, BET_KEY } from '../utils/constants.js';
 const LEN = 5;
 const CARDS_COUNT = 13 * 4;
-const DEFAULT_TOTAL = 1000;
+const DEFAULT_TOTAL = 1000; // 初始默认资产
+const DEAL_INTERVAL = 250; // 发牌动画时间间隔
+const GUESS_PER_SECOND = 8; // 猜大小 1 秒闪烁几张牌
 
-const [ WAIT, FIRST, SECOND, GUESS, LOSE, GUESS_LOSE ] = [0, 1, 2, 3, 4, 5];
+// 游戏阶段：初始、第一轮发牌、第二轮发牌、直接输、猜大小、猜大小输
+const [ WAIT, FIRST, SECOND, LOSE, GUESS, GUESS_LOSE ] = [0, 1, 2, 3, 4, 5];
+// 所有牌的数字，1-52
 const ALL_CARDS = new Array(CARDS_COUNT).fill(1).map((_, i) => i + 1);
+// 牌点数对应的展示内容
 const NUMS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+// 牌的花色：红桃、方片、黑桃、梅花
 const TYPES = ['heart', 'diamond', 'spade', 'club'];
 
 const sleep = ms => new Promise(res => setTimeout(res, ms));
 
+// 部分初始游戏数据
 const getInitData = () => ({
-  bonus: 0,
-  result: 0,
-  randomNum: 0,
-  stage: WAIT,
-  animating: false,
-  cards: Array.from({ length: LEN }, () => (['', ''])),
-  holds: new Array(LEN).fill(false),
-  guesses: [],
-  zoomTotal: false,
-  zoomWin: false,
+  bonus: 0, // 奖金金额
+  result: 0, // 牌型赔率
+  randomNum: 0, // 随机数，1 - 52，0 为牌背
+  stage: WAIT, // 游戏处于哪个阶段
+  animating: false, // 是否在进行发牌动画
+  cards: Array.from({ length: LEN }, () => (['', ''])), // 当前牌型，初始 5 张牌背
+  holds: new Array(LEN).fill(false), // 第一次发牌后选择保留的牌下标
+  guesses: [], // 猜大小历史记录
+  zoomTotal: false, // 总资产金额变化时候 zoom 提示
+  zoomWin: false, // 奖金金额变化时 zoom 提示
 });
 
+// 游戏状态数据
 const game = reactive({
   total: +localStorage.getItem(TOTAL_KEY) || DEFAULT_TOTAL,
   ...getInitData(),
 });
 
+// 当前牌型转换为包含 1-52 数字的数组，用于避免随机时重复
 const curCards = computed(() => game.cards.map(cardToNum));
+// 猜大小随机出来的牌
 const randomCard = computed(() => numToCard(game.randomNum));
 
+// 猜大小定时器
 let guessTimer = null;
 
 watch(() => game.bonus, val => {
@@ -178,6 +189,7 @@ function numToCard(val) {
   const type = TYPES[~~(val / 13.01)];
   return [ num, type ];
 }
+
 function cardToNum(card) {
   const [ num, type ] = card;
   if (!num || !type) return -1;
@@ -215,7 +227,7 @@ async function onPlayClick() {
     game.cards = Array.from({ length: LEN }, () => (['', '']));
     const cards = sampleSize(ALL_CARDS, LEN);
     for (let i = 0; i < LEN; i++) {
-      await sleep(250);
+      await sleep(DEAL_INTERVAL);
       game.cards[i] = numToCard(cards[i]);
     }
   } else if (game.stage === FIRST) {
@@ -224,7 +236,7 @@ async function onPlayClick() {
     });
     for (let i = 0; i < LEN; i++) {
       if (game.holds[i]) continue;
-      await sleep(250);
+      await sleep(DEAL_INTERVAL);
       game.cards[i] = numToCard(randomOne());
     }
   }
@@ -253,7 +265,7 @@ function startGuessTimer() {
   if (game.stage !== GUESS) return;
   guessTimer = setInterval(() => {
     game.randomNum = Math.ceil(Math.random() * CARDS_COUNT);
-  }, 125);
+  }, 1000 / GUESS_PER_SECOND);
 }
 
 function guessBigOrSmall(isBig) {
@@ -284,11 +296,11 @@ function judgeResult() {
     ns.push(card[0]);
     ts.push(card[1]);
   });
+  ns.sort((a, b) => a - b);
   if (new Set(ts).size === 1) {
     if (ns[4] - ns[0] === 4 || ns[0] === 1 && ns[1] === 10) return rulesList[0]; // 同花顺
     return rulesList[3]; // 同花
   }
-  ns.sort((a, b) => a - b);
   switch (new Set(ns).size) {
     case 5:
       if (ns[4] - ns[0] === 4 || ns[0] === 1 && ns[1] === 10) return rulesList[4]; // 顺子
@@ -404,14 +416,15 @@ function judgeResult() {
         left: 0;
         width: 100%;
         height: 100%;
-        color: #1a1;
+        color: #1c1;
         font-weight: bold;
+        font-size: 18px;
         display: flex;
         align-items: center;
         justify-content: center;
       }
       .result-lose {
-        color: #a11;
+        color: #c11;
       }
     }
     .guess-area {
