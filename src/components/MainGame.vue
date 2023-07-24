@@ -472,7 +472,7 @@ function judgeResult() {
             left: 50%;
             font-size: 12px;
             font-weight: bold;
-            transform: translateX(-8px);
+            transform: translateX(-50%);
             &.guess-win {
               color: #1f1;
             }
