@@ -5,6 +5,7 @@
   >
     <span class="card-num card-num-top" v-if="num">{{ num }}</span>
     <span class="card-num card-num-bottom" v-if="num">{{ num }}</span>
+    <span v-if="isBack" class="card-back"></span>
     <span class="card-type">
       <i i-mdi-cards-heart v-if="type === 'heart'" />
       <i i-mdi-cards-diamond v-else-if="type === 'diamond'" />
@@ -20,6 +21,8 @@ import { computed } from 'vue';
 
 const props = defineProps(['num', 'type', 'hold', 'mini']);
 
+const isBack = computed(() => !props.num || !props.type);
+
 const color = computed(() => {
   return ['heart', 'diamond'].includes(props.type) ? 'red' : 'black';
 });
@@ -29,22 +32,22 @@ const color = computed(() => {
 <style scoped lang="scss">
 .card {
   --width: 60px;
-  --height: 100px;
+  --height: 90px;
   --margin: 4px;
-  --radius: 5px;
+  --radius: 4px;
   --pos: 3px;
   --text-size: 16px;
   --icon-size: 36px;
-  --back-size: 50px;
+  --back-size: 42px;
   &-mini {
     --width: 40px;
-    --height: 58px;
+    --height: 60px;
     --margin: 1px;
-    --radius: 4px;
+    --radius: 3px;
     --pos: 1px;
     --text-size: 12px;
     --icon-size: 20px;
-    --back-size: 22px;
+    --back-size: 26px;
   }
 }
 .card {
@@ -58,6 +61,7 @@ const color = computed(() => {
   background: #fafafa;
   color: #111;
   cursor: pointer;
+  overflow: hidden;
   &-red {
     color: #e00;
   }
@@ -88,6 +92,19 @@ const color = computed(() => {
     &-back {
       font-size: var(--back-size);
     }
+  }
+  &-back {
+    position: absolute;
+    width: 96%;
+    height: 96%;
+    left: 2%;
+    top: 2%;
+    box-sizing: border-box;
+    border: 1px dotted #eee;
+    border-radius: var(--radius);
+    background: radial-gradient(circle, #9a9a9a .2px, transparent .5px);
+    background-repeat: repeat;
+    background-size: 5% 5%;
   }
 }
 </style>
