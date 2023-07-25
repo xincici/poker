@@ -2,8 +2,8 @@
   <div class="wrapper">
     <TopHeader />
     <div class="game-area">
-      <RuleArea :result="game.result" />
-      <div class="money-area">
+      <RuleArea class="uptop1" :result="game.result" />
+      <div class="money-area uptop2">
         <div>
           <span class="title">{{ i18n('total') }}</span>
           <span class="money" :class="{zoom: game.zoomTotal}">{{ game.total }}</span>
@@ -31,7 +31,7 @@
           </button>
         </div>
       </div>
-      <div class="card-area">
+      <div class="card-area uptop3">
         <CardItem
           v-for="(card, idx) in game.cards"
           :key="idx"
@@ -47,7 +47,7 @@
           👻👻 {{ i18n('tipLost') }} 👻👻
         </div>
       </div>
-      <div class="guess-area" ref="guessArea">
+      <div class="guess-area uptop4" ref="guessArea">
         <div class="guess-list">
           <div
             v-for="([num, type, isBig, isWin], idx) in game.guesses"
@@ -79,7 +79,7 @@
           />
         </div>
       </div>
-      <div class="opt-area">
+      <div class="opt-area uptop5">
         <button
           class="btn"
           :disabled="game.stage !== GUESS"
@@ -253,6 +253,7 @@ async function onPlayClick() {
       await sleep(DEAL_INTERVAL);
       game.cards[i] = numToCard(randomOne());
     }
+    await sleep(DEAL_INTERVAL);
   }
   game.animating = false;
   game.stage++;
@@ -352,6 +353,16 @@ function judgeResult() {
 </script>
 
 <style scoped lang="scss">
+@keyframes uptop {
+  from {
+    transform: translateY(250%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
 @keyframes zoom {
   from {
     transform: scale(1);
@@ -371,6 +382,21 @@ function judgeResult() {
   color: var(--text-color);
   background: var(--bg-color);
   overflow-y: auto;
+  .uptop1 {
+    animation: 0.3s ease-in-out 0.0s 1 backwards uptop;
+  }
+  .uptop2 {
+    animation: 0.3s ease-in-out 0.2s 1 backwards uptop;
+  }
+  .uptop3 {
+    animation: 0.3s ease-in-out 0.4s 1 backwards uptop;
+  }
+  .uptop4 {
+    animation: 0.3s ease-in-out 0.6s 1 backwards uptop;
+  }
+  .uptop5 {
+    animation: 0.3s ease-in-out 0.8s 1 backwards uptop;
+  }
   .btn {
     text-align: center;
     border: 1px solid var(--border-color);
