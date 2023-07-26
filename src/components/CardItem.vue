@@ -3,8 +3,8 @@
     class="card"
     :class="`card-${color} ${hold ? 'card-hold' : ''} ${mini ? 'card-mini' : ''}`"
   >
-    <span class="card-num card-num-top" v-if="num">{{ num }}</span>
-    <span class="card-num card-num-bottom" v-if="num">{{ num }}</span>
+    <span class="card-num card-num-top" v-if="point">{{ point }}</span>
+    <span class="card-num card-num-bottom" v-if="point">{{ point }}</span>
     <span v-if="isBack" class="card-back"></span>
     <span class="card-type">
       <i i-mdi-cards-heart v-if="type === 'heart'" />
@@ -19,9 +19,17 @@
 <script setup>
 import { computed } from 'vue';
 
+// 牌点数对应的展示内容
+const NUMS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+
 const props = defineProps(['num', 'type', 'hold', 'mini']);
 
 const isBack = computed(() => !props.num || !props.type);
+
+const point = computed(() => {
+  if (!props.num) return '';
+  return NUMS[props.num - 1];
+});
 
 const color = computed(() => {
   return ['heart', 'diamond'].includes(props.type) ? 'red' : 'black';

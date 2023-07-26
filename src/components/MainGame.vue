@@ -35,7 +35,7 @@
         <CardItem
           v-for="(card, idx) in game.cards"
           :key="idx"
-          :num="NUMS[card[0] - 1]"
+          :num="card[0]"
           :type="card[1]"
           :hold="game.holds[idx]"
           @click="onCardClick(idx)"
@@ -56,7 +56,7 @@
           >
             <CardItem
               :mini="true"
-              :num="NUMS[num - 1]"
+              :num="num"
               :type="type"
             />
             <span
@@ -74,7 +74,7 @@
         <div class="card-wrapper">
           <CardItem
             :mini="true"
-            :num="NUMS[randomCard[0] - 1]"
+            :num="randomCard[0]"
             :type="randomCard[1]"
           />
         </div>
@@ -140,8 +140,6 @@ const GUESS_PER_SECOND = 8; // 猜大小 1 秒闪烁几张牌
 const [ WAIT, FIRST, SECOND, LOSE, GUESS, GUESS_LOSE ] = [0, 1, 2, 3, 4, 5];
 // 所有牌的数字，1-52，用于把随机数映射到具体的牌
 const ALL_CARDS = new Array(CARDS_COUNT).fill(1).map((_, i) => i + 1);
-// 牌点数对应的展示内容
-const NUMS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 // 牌的花色：红桃、方片、黑桃、梅花
 const TYPES = ['heart', 'diamond', 'spade', 'club'];
 
@@ -187,14 +185,15 @@ watch(() => game.total, async () => {
   await sleep(600);
   game.zoomTotal = false;
 });
-
 watch(() => game.stage, val => {
-  if (val !== GUESS) {
+  if (val === GUESS) return startGuessTimer();
+  if (val === GUESS_LOSE) {
     if (guessTimer) clearInterval(guessTimer);
     guessTimer = null;
-    return;
+    game.bonus = 0;
+    game.result = 0;
+    game.randomNum = 0;
   }
-  startGuessTimer();
 });
 
 watchEffect(() => {
@@ -266,10 +265,7 @@ async function onPlayClick() {
   game.stage++;
   if (game.stage === SECOND) {
     const res = judgeResult();
-    if (!res) {
-      game.stage = LOSE;
-      return;
-    }
+    if (!res) return game.stage = LOSE;
     game.stage = GUESS;
     game.result = res.times;
     game.bonus = bet.value * res.times;
@@ -277,38 +273,28 @@ async function onPlayClick() {
 }
 
 function onResetClick() {
-  if (game.stage === GUESS) {
-    game.total += game.bonus;
-  }
+  if (game.stage === GUESS) game.total += game.bonus;
   Object.assign(game, getInitData());
 }
 
 function startGuessTimer() {
-  if (game.stage !== GUESS) return;
   guessTimer = setInterval(() => {
     game.randomNum = randomANum();
   }, 1000 / GUESS_PER_SECOND);
 }
 
 function guessBigOrSmall(isBig) {
-  if (!guessTimer) return;
-  const [ tmpNum, tmpType ] = numToCard(game.randomNum);
-  console.log({ tmpNum, tmpType });
-  let isWin = -1;
-  if (tmpNum < 7 && isBig || tmpNum > 7 && !isBig) {
-    game.bonus = 0;
-    clearInterval(guessTimer);
+  if (game.stage !== GUESS) return;
+  const [ num, type ] = numToCard(game.randomNum);
+  let isWin = 0;
+  if (num > 7 && isBig || num < 7 && !isBig) {
+    game.bonus *= 2;
+    isWin = 1;
+  } else if (num !== 7) {
     game.stage = GUESS_LOSE;
-    game.result = 0;
-    game.randomNum = 0;
-  } else {
-    isWin = 0;
-    if (tmpNum !== 7) {
-      game.bonus *= 2;
-      isWin = 1;
-    }
+    isWin = -1;
   }
-  game.guesses.push([ tmpNum, tmpType, isBig, isWin ]);
+  game.guesses.push([ num, type, isBig, isWin ]);
   guessArea.value.scrollTo(1000, 0);
 }
 
