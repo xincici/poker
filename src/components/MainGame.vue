@@ -35,7 +35,7 @@
         <CardItem
           v-for="(card, idx) in game.cards"
           :key="idx"
-          :num="NUMS[card[0] - 1] || ''"
+          :num="NUMS[card[0] - 1]"
           :type="card[1]"
           :hold="game.holds[idx]"
           @click="onCardClick(idx)"
@@ -56,7 +56,7 @@
           >
             <CardItem
               :mini="true"
-              :num="NUMS[num - 1] || ''"
+              :num="NUMS[num - 1]"
               :type="type"
             />
             <span
@@ -74,7 +74,7 @@
         <div class="card-wrapper">
           <CardItem
             :mini="true"
-            :num="NUMS[randomCard[0] - 1] || ''"
+            :num="NUMS[randomCard[0] - 1]"
             :type="randomCard[1]"
           />
         </div>
@@ -125,14 +125,20 @@ import { bet, changeBet, MIN_BET, MAX_BET } from '../utils/bet.js';
 
 import { TOTAL_KEY, BET_KEY } from '../utils/constants.js';
 const LEN = 5;
-const CARDS_COUNT = 13 * 4;
+const CARDS_COUNT = 13 * 4; // 总共可用 52 张牌
 const DEFAULT_TOTAL = 1000; // 初始默认资产
 const DEAL_INTERVAL = 250; // 发牌动画时间间隔
 const GUESS_PER_SECOND = 8; // 猜大小 1 秒闪烁几张牌
 
-// 游戏阶段：初始、第一轮发牌、第二轮发牌、直接输、猜大小、猜大小输
+/*
+ * 游戏阶段：0:初始、1:第一轮发牌、2:第二轮发牌、3:直接输、4:赢猜大小、5:猜大小猜错
+ * 状态机
+ * 0 -> 1 -> 2 -> 3 -[重置]-> 0
+ *           ╰-> 4 -[结算]-> 0
+ *                ╰-> 5 -[重置]-> 0
+ */
 const [ WAIT, FIRST, SECOND, LOSE, GUESS, GUESS_LOSE ] = [0, 1, 2, 3, 4, 5];
-// 所有牌的数字，1-52
+// 所有牌的数字，1-52，用于把随机数映射到具体的牌
 const ALL_CARDS = new Array(CARDS_COUNT).fill(1).map((_, i) => i + 1);
 // 牌点数对应的展示内容
 const NUMS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
@@ -171,17 +177,15 @@ const randomCard = computed(() => numToCard(game.randomNum));
 // 猜大小定时器
 let guessTimer = null;
 
-watch(() => game.bonus, val => {
+watch(() => game.bonus, async () => {
   game.zoomWin = true;
-  setTimeout(() => {
-    game.zoomWin = false;
-  }, 600);
+  await sleep(600);
+  game.zoomWin = false;
 });
-watch(() => game.total, val => {
+watch(() => game.total, async () => {
   game.zoomTotal = true;
-  setTimeout(() => {
-    game.zoomTotal = false;
-  }, 600);
+  await sleep(600);
+  game.zoomTotal = false;
 });
 
 watch(() => game.stage, val => {
@@ -210,10 +214,13 @@ function cardToNum(card) {
   return TYPES.indexOf(type) * 13 + num;
 }
 
-function randomOne(all) {
-  if (all) return Math.ceil(Math.random() * CARDS_COUNT);
+function randomANum() {
+  return Math.ceil(Math.random() * CARDS_COUNT);
+}
+
+function randomOne() {
   while (true) {
-    const val = Math.ceil(Math.random() * CARDS_COUNT);
+    const val = randomANum();
     if (!curCards.value.includes(val)) return val;
   }
 }
@@ -279,7 +286,7 @@ function onResetClick() {
 function startGuessTimer() {
   if (game.stage !== GUESS) return;
   guessTimer = setInterval(() => {
-    game.randomNum = Math.ceil(Math.random() * CARDS_COUNT);
+    game.randomNum = randomANum();
   }, 1000 / GUESS_PER_SECOND);
 }
 
