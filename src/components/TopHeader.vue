@@ -15,9 +15,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import HelpDialog from './HelpDialog.vue';
-
 import { toggle as toggleLanguage } from '../plugins/i18n';
 import { isDark, toggle as toggleTheme } from '../utils/theme';
 

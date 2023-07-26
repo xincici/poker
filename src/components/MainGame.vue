@@ -188,8 +188,7 @@ watch(() => game.total, async () => {
 watch(() => game.stage, val => {
   if (val === GUESS) return startGuessTimer();
   if (val === GUESS_LOSE) {
-    if (guessTimer) clearInterval(guessTimer);
-    guessTimer = null;
+    stopGuessTimer();
     game.bonus = 0;
     game.result = 0;
     game.randomNum = 0;
@@ -273,7 +272,10 @@ async function onPlayClick() {
 }
 
 function onResetClick() {
-  if (game.stage === GUESS) game.total += game.bonus;
+  if (game.stage === GUESS) {
+    game.total += game.bonus;
+    stopGuessTimer();
+  }
   Object.assign(game, getInitData());
 }
 
@@ -281,6 +283,11 @@ function startGuessTimer() {
   guessTimer = setInterval(() => {
     game.randomNum = randomANum();
   }, 1000 / GUESS_PER_SECOND);
+}
+
+function stopGuessTimer() {
+  if (guessTimer) clearInterval(guessTimer);
+  guessTimer = null;
 }
 
 function guessBigOrSmall(isBig) {

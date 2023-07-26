@@ -1,11 +1,15 @@
 <template>
   <span
     class="card"
-    :class="`card-${color} ${hold ? 'card-hold' : ''} ${mini ? 'card-mini' : ''}`"
+    :class="{
+      'card-red': isRed,
+      'card-mini': mini,
+      'card-hold': hold,
+    }"
   >
     <span class="card-num card-num-top" v-if="point">{{ point }}</span>
     <span class="card-num card-num-bottom" v-if="point">{{ point }}</span>
-    <span v-if="isBack" class="card-back"></span>
+    <span class="card-back" v-if="isBack"></span>
     <span class="card-type">
       <i i-mdi-cards-heart v-if="type === 'heart'" />
       <i i-mdi-cards-diamond v-else-if="type === 'diamond'" />
@@ -26,14 +30,9 @@ const props = defineProps(['num', 'type', 'hold', 'mini']);
 
 const isBack = computed(() => !props.num || !props.type);
 
-const point = computed(() => {
-  if (!props.num) return '';
-  return NUMS[props.num - 1];
-});
+const isRed = computed(() => ['heart', 'diamond'].includes(props.type));
 
-const color = computed(() => {
-  return ['heart', 'diamond'].includes(props.type) ? 'red' : 'black';
-});
+const point = computed(() => props.num ? NUMS[props.num - 1] : '');
 
 </script>
 
