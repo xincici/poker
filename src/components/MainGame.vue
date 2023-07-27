@@ -466,7 +466,7 @@ function judgeResult() {
         left: 0;
         width: 100%;
         height: 100%;
-        color: #1c1;
+        color: #1b1;
         font-weight: bold;
         font-size: 18px;
         display: flex;
@@ -474,7 +474,7 @@ function judgeResult() {
         justify-content: center;
       }
       .result-lose {
-        color: #c11;
+        color: #b11;
       }
     }
     .guess-area {
