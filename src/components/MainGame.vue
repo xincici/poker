@@ -137,7 +137,7 @@ const GUESS_PER_SECOND = 8; // 猜大小 1 秒闪烁几张牌
  *           ╰-> 4 -[结算]-> 0
  *                ╰-> 5 -[重置]-> 0
  */
-const [ WAIT, FIRST, SECOND, LOSE, GUESS, GUESS_LOSE ] = [0, 1, 2, 3, 4, 5];
+const [WAIT, FIRST, SECOND, LOSE, GUESS, GUESS_LOSE] = [0, 1, 2, 3, 4, 5];
 // 所有牌的数字，1-52，用于把随机数映射到具体的牌
 const ALL_CARDS = new Array(CARDS_COUNT).fill(1).map((_, i) => i + 1);
 // 牌的花色：红桃、方片、黑桃、梅花
@@ -203,11 +203,11 @@ function numToCard(val) {
   if (!val) return ['', ''];
   const num = val % 13 || 13;
   const type = TYPES[~~(val / 13.01)];
-  return [ num, type ];
+  return [num, type];
 }
 
 function cardToNum(card) {
-  const [ num, type ] = card;
+  const [num, type] = card;
   if (!num || !type) return -1;
   return TYPES.indexOf(type) * 13 + num;
 }
@@ -280,6 +280,7 @@ function onResetClick() {
 }
 
 function startGuessTimer() {
+  game.randomNum = randomANum();
   guessTimer = setInterval(() => {
     game.randomNum = randomANum();
   }, 1000 / GUESS_PER_SECOND);
@@ -292,16 +293,16 @@ function stopGuessTimer() {
 
 function guessBigOrSmall(isBig) {
   if (game.stage !== GUESS) return;
-  const [ num, type ] = numToCard(game.randomNum);
+  const [num, type] = numToCard(game.randomNum);
   let isWin = 0;
   if (num > 7 && isBig || num < 7 && !isBig) {
-    game.bonus *= 2;
+    game.bonus <<= 1;
     isWin = 1;
   } else if (num !== 7) {
     game.stage = GUESS_LOSE;
     isWin = -1;
   }
-  game.guesses.push([ num, type, isBig, isWin ]);
+  game.guesses.push([num, type, isBig, isWin]);
   guessArea.value.scrollTo(1000, 0);
 }
 
@@ -313,36 +314,24 @@ function judgeResult() {
     ts.add(card[1]);
   });
   ns.sort((a, b) => a - b);
-  const [ n1, n2, n3, n4, n5 ] = ns;
+  const [n1, n2, n3, n4, n5] = ns;
   if (ts.size === 1) {
-    if (
-      n5 - n1 === 4 || n1 === 1 && n2 === 10
-    ) return rulesList[0]; // 同花顺
+    if (n5 - n1 === 4 || n1 === 1 && n2 === 10) return rulesList[0]; // 同花顺
     return rulesList[3]; // 同花
   }
   switch (new Set(ns).size) {
     case 5:
-      if (
-        n5 - n1 === 4 || n1 === 1 && n2 === 10
-      ) return rulesList[4]; // 顺子
+      if (n5 - n1 === 4 || n1 === 1 && n2 === 10) return rulesList[4]; // 顺子
       return 0; // 什么也不是
     case 2:
-      if (
-        n1 === n4 || n2 === n5
-      ) return rulesList[1]; // 四条
-      if (
-        n1 === n3 && n4 === n5 || n1 === n2 && n3 === n5
-      ) return rulesList[2]; // 葫芦
+      if (n1 === n4 || n2 === n5) return rulesList[1]; // 四条
+      if (n1 === n3 && n4 === n5 || n1 === n2 && n3 === n5) return rulesList[2]; // 葫芦
     case 3:
-      if (
-        n1 === n3 || n2 === n4 || n3 === n5
-      ) return rulesList[5] // 三条
+      if (n1 === n3 || n2 === n4 || n3 === n5) return rulesList[5] // 三条
       return rulesList[6]; // 两对
     case 4:
       for (let i = 1; i < LEN; i++) {
-        if (
-          ns[i] === ns[i - 1] && (ns[i] === 1 || ns[i] >= 8)
-        ) return rulesList[7]; // 大于 8 一对
+        if (ns[i] === ns[i - 1] && (ns[i] === 1 || ns[i] >= 8)) return rulesList[7]; // 大于 8 一对
       }
       return 0;
     default:
