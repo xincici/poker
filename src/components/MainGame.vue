@@ -50,6 +50,7 @@
       <div
         v-if="dice"
         class="guess-area uptop4"
+        :class="`${manualDice ? 'uptop0' : ''}`"
         ref="guessArea"
       >
         <div class="guess-list">
@@ -167,6 +168,12 @@ const getInitData = () => ({
 });
 
 const guessArea = ref(null);
+
+// 是否手动操作过打开猜大小，手动打开动画无延迟
+const manualDice = ref(false);
+watch(dice, val => {
+  manualDice.value = true;
+});
 
 // 游戏状态数据
 const game = reactive({
@@ -384,6 +391,9 @@ function judgeResult() {
 }
 .uptop5 {
   animation: 0.3s ease-in-out 0.8s 1 backwards uptop;
+}
+.uptop0 {
+  animation-delay: 0s;
 }
 .btn {
   text-align: center;
