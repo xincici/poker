@@ -410,11 +410,13 @@ function judgeResult() {
   }
   .game-area {
     max-width: var(--max-width);
-    margin: 0 auto;
+    border: 1px solid var(--border-color);
+    border-width: 0 1px;
+    margin: 0 auto 50px;
+    box-sizing: border-box;
     .money-area {
       display: flex;
-      border: 1px solid var(--border-color);
-      border-top: 0 none;
+      border-bottom: 1px solid var(--border-color);
       > div {
         flex: 1 0 33%;
         position: relative;
@@ -451,8 +453,7 @@ function judgeResult() {
     }
     .card-area {
       padding: 25px 0;
-      border: 1px solid var(--border-color);
-      border-top: 0 none;
+      border-bottom: 1px solid var(--border-color);
       position: relative;
       font-size: 0;
       .result-win,.result-lose {
@@ -477,8 +478,6 @@ function judgeResult() {
       padding: 10px 0 25px;
       text-align: left;
       overflow-x: auto;
-      border: 1px solid var(--border-color);
-      border-top: 0 none;
       font-size: 0;
       white-space: nowrap;
       .guess-list {
@@ -513,10 +512,8 @@ function judgeResult() {
     }
     .opt-area {
       display: flex;
-      border: 0 none;
       align-items: center;
       height: 60px;
-      margin-bottom: 50px;
       .btn {
         flex: 1 0 25%;
         height: 100%;
