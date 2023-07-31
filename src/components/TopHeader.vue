@@ -3,6 +3,10 @@
     <span class="item-wrapper">
       <HelpDialog />
     </span>
+    <span class="item-wrapper" @click="toggleDice">
+      <i i-mdi-dice-5 v-if="dice" />
+      <i i-mdi-dice-5-outline v-else />
+    </span>
     <span class="title">{{ i18n('gameTitle') }}</span>
     <span class="item-wrapper" @click="toggleTheme">
       <i i-carbon-moon v-if="isDark" />
@@ -16,8 +20,9 @@
 
 <script setup>
 import HelpDialog from './HelpDialog.vue';
-import { toggle as toggleLanguage } from '../plugins/i18n';
-import { isDark, toggle as toggleTheme } from '../utils/theme';
+import { toggle as toggleLanguage } from '../plugins/i18n.js';
+import { isDark, toggle as toggleTheme } from '../utils/theme.js';
+import { dice, toggle as toggleDice } from '../utils/dice.js';
 
 </script>
 

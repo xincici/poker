@@ -15,6 +15,7 @@
               <li>1. {{ i18n('help1') }}</li>
               <li>2. {{ i18n('help2') }}</li>
               <li>3. {{ i18n('help3') }}</li>
+              <li>4. {{ i18n('help4') }}</li>
             </ul>
           </div>
           <div class="help-button">

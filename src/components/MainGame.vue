@@ -47,7 +47,11 @@
           👻👻 {{ i18n('tipLost') }} 👻👻
         </div>
       </div>
-      <div class="guess-area uptop4" ref="guessArea">
+      <div
+        v-if="dice"
+        class="guess-area uptop4"
+        ref="guessArea"
+      >
         <div class="guess-list">
           <div
             v-for="([num, type, isBig, isWin], idx) in game.guesses"
@@ -82,6 +86,7 @@
       <div class="opt-area uptop5">
         <button
           class="btn"
+          v-if="dice"
           :disabled="game.stage !== GUESS"
           @click="guessBigOrSmall(true)"
         >
@@ -89,6 +94,7 @@
         </button>
         <button
           class="btn"
+          v-if="dice"
           :disabled="game.stage !== GUESS"
           @click="guessBigOrSmall(false)"
         >
@@ -122,6 +128,7 @@ import RuleArea from './RuleArea.vue';
 import CardItem from './CardItem.vue';
 import { rulesList } from '../utils/rules.js';
 import { bet, changeBet, MIN_BET, MAX_BET } from '../utils/bet.js';
+import { dice } from '../utils/dice.js';
 
 import { TOTAL_KEY, BET_KEY } from '../utils/constants.js';
 const LEN = 5;
@@ -303,7 +310,7 @@ function guessBigOrSmall(isBig) {
     isWin = -1;
   }
   game.guesses.push([num, type, isBig, isWin]);
-  guessArea.value.scrollTo(1000, 0);
+  guessArea.value?.scrollTo(1000, 0);
 }
 
 function judgeResult() {
@@ -506,13 +513,12 @@ function judgeResult() {
     }
     .opt-area {
       display: flex;
-      border: 1px solid var(--border-color);
-      border-top: 0 none;
+      border: 0 none;
       align-items: center;
       height: 60px;
       margin-bottom: 50px;
       .btn {
-        flex: 0 0 25%;
+        flex: 1 0 25%;
         height: 100%;
         font-size: 16px;
       }
