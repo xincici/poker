@@ -401,6 +401,7 @@ function judgeResult() {
   color: #fff;
   font-weight: bold;
   padding: 0;
+  margin: 0;
   background: rgba(60, 160, 60, .9);
   cursor: pointer;
   &:disabled {
