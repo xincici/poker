@@ -14,7 +14,7 @@
         v-else
         class="card"
         :class="{
-          'card-red': isRed && !b2a,
+          'card-red': isRed,
           'card-hold': hold,
         }"
       >
