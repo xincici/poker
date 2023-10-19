@@ -42,6 +42,7 @@ import { dice, toggle as toggleDice } from '../utils/dice.js';
   height: 50px;
   border: 1px solid var(--border-color);
   border-top: 0 none;
+  z-index: 1;
   .title {
     flex: 1;
     font-size: 18px;
