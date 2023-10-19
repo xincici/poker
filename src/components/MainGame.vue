@@ -416,15 +416,13 @@ function judgeResult() {
   color: var(--text-color);
   background: var(--bg-color);
   overflow-y: auto;
-  .header-wrapper {
-    border-bottom: 1px solid var(--border-color);
-  }
   .game-area {
     max-width: var(--max-width);
     border: 1px solid var(--border-color);
     border-width: 0 1px;
     margin: 0 auto 50px;
     box-sizing: border-box;
+    padding-top: 50px;
     .money-area {
       display: flex;
       border-bottom: 1px solid var(--border-color);

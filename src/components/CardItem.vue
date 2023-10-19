@@ -1,5 +1,10 @@
 <template>
-  <span class="card-wrapper" :class="{'card-wrapper-mini': mini}">
+  <span
+    :class="{
+      'card-wrapper': true,
+      'card-wrapper-mini': mini,
+    }"
+  >
     <Transition name="rotate">
       <span
         v-if="isBack && !mini"
@@ -12,8 +17,8 @@
       </span>
       <span
         v-else
-        class="card"
         :class="{
+          card: true,
           'card-red': isRed,
           'card-hold': hold,
         }"
@@ -34,7 +39,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 
 // 牌点数对应的展示内容
 const NUMS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];

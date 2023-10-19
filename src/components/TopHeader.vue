@@ -28,12 +28,20 @@ import { dice, toggle as toggleDice } from '../utils/dice.js';
 
 <style scoped lang="scss">
 .header-wrapper {
+  background: var(--bg-color);
   max-width: var(--max-width);
-  margin: 0 auto;
   padding: 10px 8px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 50px;
+  border: 1px solid var(--border-color);
+  border-top: 0 none;
   .title {
     flex: 1;
     font-size: 18px;
