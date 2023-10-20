@@ -58,7 +58,7 @@ const point = computed(() => props.num ? NUMS[props.num - 1] : '');
 .card-wrapper {
   --width: 60px;
   --height: 90px;
-  --margin: 4px;
+  --margin: 5px;
   --radius: 4px;
   --pos: 3px;
   --text-size: 16px;
