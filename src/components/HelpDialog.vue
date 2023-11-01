@@ -78,8 +78,7 @@ watch(helpShow, val => {
   .help-inner {
     text-align: left;
     width: 720px;
-    margin: 0;
-    transform: translateY(-10%);
+    margin: -40px 0 0 0;
     .help-icon {
       text-align: center;
       font-size: 28px;
