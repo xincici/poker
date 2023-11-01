@@ -16,6 +16,7 @@
               <li>2. {{ i18n('help2') }}</li>
               <li>3. {{ i18n('help3') }}</li>
               <li>4. {{ i18n('help4') }}</li>
+              <li>5. {{ i18n('help5') }}</li>
             </ul>
           </div>
           <div class="help-button">
@@ -78,6 +79,7 @@ watch(helpShow, val => {
     text-align: left;
     width: 720px;
     margin: 0;
+    transform: translateY(-10%);
     .help-icon {
       text-align: center;
       font-size: 28px;

@@ -21,13 +21,15 @@
           card: true,
           'card-red': isRed,
           'card-hold': hold,
+          'card-joker': isJoker,
         }"
       >
         <span class="card-num card-num-top" v-if="!isBack">{{ point }}</span>
         <span class="card-num card-num-bottom" v-if="!isBack">{{ point }}</span>
         <span class="card-back" v-if="isBack"></span>
         <span class="card-type">
-          <i i-mdi-cards-playing v-if="isBack" class="card-type-back" />
+          <i i-mdi-account-cowboy-hat v-if="isJoker" />
+          <i i-mdi-cards-playing v-else-if="isBack" class="card-type-back" />
           <i i-mdi-cards-heart v-else-if="type === 'heart'" />
           <i i-mdi-cards-diamond v-else-if="type === 'diamond'" />
           <i i-mdi-cards-spade v-else-if="type === 'spade'" />
@@ -42,13 +44,15 @@
 import { computed } from 'vue';
 
 // 牌点数对应的展示内容
-const NUMS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+const NUMS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'JOKER'];
 
 const props = defineProps(['num', 'type', 'hold', 'mini']);
 
 const isBack = computed(() => !props.num || !props.type);
 
 const isRed = computed(() => ['heart', 'diamond'].includes(props.type));
+
+const isJoker = computed(() => props.num === 14);
 
 const point = computed(() => props.num ? NUMS[props.num - 1] : '');
 
@@ -114,6 +118,20 @@ const point = computed(() => props.num ? NUMS[props.num - 1] : '');
   overflow: hidden;
   &-red {
     color: #e00;
+  }
+  &-joker {
+    .card-num {
+      width: 1em;
+      font-size: 11px;
+      word-break: break-all;
+      line-height: 0.85;
+      &-top {
+        left: 1px;;
+      }
+      &-bottom {
+        right: 1px;
+      }
+    }
   }
   &-hold {
     outline: 3px solid #e00;

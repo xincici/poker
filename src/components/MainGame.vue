@@ -132,8 +132,10 @@ import { bet, changeBet, MIN_BET, MAX_BET } from '../utils/bet.js';
 import { dice } from '../utils/dice.js';
 
 import { TOTAL_KEY, BET_KEY } from '../utils/constants.js';
-const LEN = 5;
+const LEN = 5; // 一组牌 5 张
 const CARDS_COUNT = 13 * 4; // 总共可用 52 张牌
+const JOKER_1 = CARDS_COUNT + 1; // 小王 53
+const JOKER_2 = CARDS_COUNT + 2; // 大王 54
 const DEFAULT_TOTAL = 1000; // 初始默认资产
 const DEAL_INTERVAL = 250; // 发牌动画时间间隔
 const GUESS_PER_SECOND = 8; // 猜大小 1 秒闪烁几张牌
@@ -146,10 +148,15 @@ const GUESS_PER_SECOND = 8; // 猜大小 1 秒闪烁几张牌
  *                ╰-> 5 -[重置]-> 0
  */
 const [WAIT, FIRST, SECOND, LOSE, GUESS, GUESS_LOSE] = [0, 1, 2, 3, 4, 5];
-// 所有牌的数字，1-52，用于把随机数映射到具体的牌
-const ALL_CARDS = new Array(CARDS_COUNT).fill(1).map((_, i) => i + 1);
-// 牌的花色：红桃、方片、黑桃、梅花
-const TYPES = ['heart', 'diamond', 'spade', 'club'];
+// 所有牌的数字，1-54，用于把随机数映射到具体的牌，53 小王、54 大王
+const ALL_CARDS = new Array(CARDS_COUNT + 2).fill(1).map((_, i) => i + 1);
+
+// 大小王可替换为哪些牌的数字，小王 1 -> 26，大王 27 -> 52
+const CARDS_JOKER1 = new Array(CARDS_COUNT / 2).fill(1).map((_, i) => i + 1);
+const CARDS_JOKER2 = new Array(CARDS_COUNT / 2).fill(1).map((_, i) => i + 27);
+
+// 牌的花色：黑桃、梅花、红桃、方片
+const TYPES = ['spade', 'club', 'heart', 'diamond'];
 
 const sleep = ms => new Promise(res => setTimeout(res, ms));
 
@@ -181,7 +188,7 @@ const game = reactive({
   ...getInitData(),
 });
 
-// 当前牌型转换为包含 1-52 数字的数组，用于避免随机时重复
+// 当前牌型转换为包含 1-54 数字的数组，用于避免随机时重复
 const curCards = computed(() => game.cards.map(cardToNum));
 // 猜大小随机出来的牌
 const randomCard = computed(() => numToCard(game.randomNum));
@@ -215,6 +222,8 @@ watchEffect(() => {
 
 function numToCard(val) {
   if (!val) return ['', ''];
+  if (val === JOKER_1) return [14, 'spade']; // 小王花色 黑桃
+  if (val === JOKER_2) return [14, 'heart']; // 大王花色 红桃
   const num = val % 13 || 13;
   const type = TYPES[~~(val / 13.01)];
   return [num, type];
@@ -223,16 +232,17 @@ function numToCard(val) {
 function cardToNum(card) {
   const [num, type] = card;
   if (!num || !type) return -1;
+  if (num === 14) return type === 'spade' ? JOKER_1 : JOKER_2;
   return TYPES.indexOf(type) * 13 + num;
 }
 
-function randomANum() {
-  return Math.ceil(Math.random() * CARDS_COUNT);
+function randomANum(maxNumber = CARDS_COUNT) {
+  return Math.ceil(Math.random() * maxNumber);
 }
 
 function randomOne() {
   while (true) {
-    const val = randomANum();
+    const val = randomANum(CARDS_COUNT + 2);
     if (!curCards.value.includes(val)) return val;
   }
 }
@@ -321,12 +331,29 @@ function guessBigOrSmall(isBig) {
 }
 
 function judgeResult() {
-  const ns = [];
-  const ts = new Set([]);
-  game.cards.forEach(card => {
-    ns.push(card[0]);
-    ts.add(card[1]);
-  });
+  if (curCards.value.every(num => num <= CARDS_COUNT)) {
+    return getResult(curCards.value);
+  }
+  let result = 0;
+  const arr1 = curCards.value.includes(JOKER_1) ? CARDS_JOKER1 : [0];
+  const arr2 = curCards.value.includes(JOKER_2) ? CARDS_JOKER2 : [0];
+  const leftCards = curCards.value.filter(num => num <= CARDS_COUNT);
+  for (let i = 0; i < arr1.length; i++) {
+    const n1 = arr1[i];
+    if (leftCards.includes(n1)) continue;
+    for (let j = 0; j < arr2.length; j++) {
+      const n2 = arr2[j];
+      if (leftCards.includes(n2)) continue;
+      const tmp = getResult([...leftCards, n1, n2].filter(Boolean));
+      result = tmp ? Math.max(tmp.times, result) : result;
+    }
+  }
+  return result ? {times: result} : result;
+}
+
+function getResult(cardsNum) {
+  const ns = cardsNum.map(num => num % 13 || 13);
+  const ts = new Set(cardsNum.map(num => ~~(num / 13.01)));
   ns.sort((a, b) => a - b);
   const [n1, n2, n3, n4, n5] = ns;
   if (ts.size === 1) {
