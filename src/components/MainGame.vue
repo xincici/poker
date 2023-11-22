@@ -290,8 +290,8 @@ async function onPlayClick() {
     const res = judgeResult();
     if (!res) return game.stage = LOSE;
     game.stage = GUESS;
-    game.result = res.times;
-    game.bonus = bet.value * res.times;
+    game.result = res;
+    game.bonus = bet.value * res;
   }
 }
 
@@ -345,10 +345,10 @@ function judgeResult() {
       const n2 = arr2[j];
       if (leftCards.includes(n2)) continue;
       const tmp = getResult([...leftCards, n1, n2].filter(Boolean));
-      result = tmp ? Math.max(tmp.times, result) : result;
+      result = Math.max(tmp, result);
     }
   }
-  return result ? {times: result} : result;
+  return result;
 }
 
 function getResult(cardsNum) {
@@ -357,22 +357,22 @@ function getResult(cardsNum) {
   ns.sort((a, b) => a - b);
   const [n1, n2, n3, n4, n5] = ns;
   if (ts.size === 1) {
-    if (n5 - n1 === 4 || n1 === 1 && n2 === 10) return rulesList[0]; // 同花顺
-    return rulesList[3]; // 同花
+    if (n5 - n1 === 4 || n1 === 1 && n2 === 10) return rulesList[0].times; // 同花顺
+    return rulesList[3].times; // 同花
   }
   switch (new Set(ns).size) {
     case 5:
-      if (n5 - n1 === 4 || n1 === 1 && n2 === 10) return rulesList[4]; // 顺子
+      if (n5 - n1 === 4 || n1 === 1 && n2 === 10) return rulesList[4].times; // 顺子
       return 0; // 什么也不是
     case 2:
-      if (n1 === n4 || n2 === n5) return rulesList[1]; // 四条
-      if (n1 === n3 && n4 === n5 || n1 === n2 && n3 === n5) return rulesList[2]; // 葫芦
+      if (n1 === n4 || n2 === n5) return rulesList[1].times; // 四条
+      if (n1 === n3 && n4 === n5 || n1 === n2 && n3 === n5) return rulesList[2].times; // 葫芦
     case 3:
-      if (n1 === n3 || n2 === n4 || n3 === n5) return rulesList[5] // 三条
-      return rulesList[6]; // 两对
+      if (n1 === n3 || n2 === n4 || n3 === n5) return rulesList[5].times // 三条
+      return rulesList[6].times; // 两对
     case 4:
       for (let i = 1; i < LEN; i++) {
-        if (ns[i] === ns[i - 1] && (ns[i] === 1 || ns[i] >= 8)) return rulesList[7]; // 大于 8 一对
+        if (ns[i] === ns[i - 1] && (ns[i] === 1 || ns[i] >= 8)) return rulesList[7].times; // 大于 8 一对
       }
       return 0;
     default:
@@ -404,20 +404,11 @@ function getResult(cardsNum) {
     transform: scale(1);
   }
 }
-.uptop1 {
-  animation: 0.3s ease-in-out 0.0s 1 backwards uptop;
-}
-.uptop2 {
-  animation: 0.3s ease-in-out 0.2s 1 backwards uptop;
-}
-.uptop3 {
-  animation: 0.3s ease-in-out 0.4s 1 backwards uptop;
-}
-.uptop4 {
-  animation: 0.3s ease-in-out 0.6s 1 backwards uptop;
-}
-.uptop5 {
-  animation: 0.3s ease-in-out 0.8s 1 backwards uptop;
+
+@for $i from 1 through 5 {
+  .uptop#{$i} {
+    animation: 0.3s ease-in-out ($i - 1) * 0.2s 1 backwards uptop;
+  }
 }
 .uptop0 {
   animation-delay: 0s;
