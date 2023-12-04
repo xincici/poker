@@ -249,6 +249,7 @@ function randomOne() {
 
 function onCardClick(idx) {
   if (game.stage !== FIRST) return;
+  if (game.animating) return;
   game.holds[idx] = !game.holds[idx];
 }
 
