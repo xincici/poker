@@ -131,14 +131,14 @@ import { rulesList } from '../utils/rules.js';
 import { bet, changeBet, MIN_BET, MAX_BET } from '../utils/bet.js';
 import { dice } from '../utils/dice.js';
 
-import { TOTAL_KEY, BET_KEY } from '../utils/constants.js';
+import { TOTAL_KEY } from '../utils/constants.js';
 const LEN = 5; // 一组牌 5 张
 const CARDS_COUNT = 13 * 4; // 总共可用 52 张牌
 const JOKER_1 = CARDS_COUNT + 1; // 小王 53
 const JOKER_2 = CARDS_COUNT + 2; // 大王 54
 const DEFAULT_TOTAL = 1000; // 初始默认资产
 const DEAL_INTERVAL = 250; // 发牌动画时间间隔
-const GUESS_PER_SECOND = 8; // 猜大小 1 秒闪烁几张牌
+const GUESS_PER_SECOND = 10; // 猜大小 1 秒闪烁几张牌
 
 /*
  * 游戏阶段：0:初始、1:第一轮发牌、2:第二轮发牌、3:直接输、4:赢猜大小、5:猜大小猜错
@@ -367,7 +367,7 @@ function getResult(cardsNum) {
       return 0; // 什么也不是
     case 2:
       if (n1 === n4 || n2 === n5) return rulesList[1].times; // 四条
-      if (n1 === n3 && n4 === n5 || n1 === n2 && n3 === n5) return rulesList[2].times; // 葫芦
+      return rulesList[2].times; // 葫芦
     case 3:
       if (n1 === n3 || n2 === n4 || n3 === n5) return rulesList[5].times // 三条
       return rulesList[6].times; // 两对
