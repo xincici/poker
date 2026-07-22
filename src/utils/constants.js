@@ -17,3 +17,5 @@ export const TOTAL_KEY = `${PREFIX}_total`;
 export const BET_KEY = `${PREFIX}_bet`;
 
 export const DICE_KEY = `${PREFIX}_dice`;
+
+export const THEME_MODE_KEY = `${PREFIX}_theme_mode`;

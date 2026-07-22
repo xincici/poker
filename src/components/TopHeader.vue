@@ -8,9 +8,10 @@
       <i i-mdi-dice-5-outline v-else />
     </span>
     <span class="title">{{ i18n('gameTitle') }}</span>
-    <span class="item-wrapper" @click="toggleTheme">
-      <i i-carbon-moon v-if="isDark" />
-      <i i-carbon-sun v-else />
+    <span class="item-wrapper theme-btn" @click="toggleTheme" :title="themeMode">
+      <i i-carbon-moon v-if="themeMode === 'dark'" />
+      <i i-carbon-sun v-else-if="themeMode === 'light'" />
+      <i i-carbon-laptop v-else />
     </span>
     <span class="item-wrapper" @click="toggleLanguage">
       <i i-carbon-ibm-watson-language-translator />
@@ -21,7 +22,7 @@
 <script setup>
 import HelpDialog from './HelpDialog.vue';
 import { toggle as toggleLanguage } from '../plugins/i18n.js';
-import { isDark, toggle as toggleTheme } from '../utils/theme.js';
+import { isDark, themeMode, toggle as toggleTheme } from '../utils/theme.js';
 import { dice, toggle as toggleDice } from '../utils/dice.js';
 
 </script>
