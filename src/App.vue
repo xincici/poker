@@ -20,15 +20,17 @@ html, body, #app {
   text-align: center;
 }
 body {
-  --border-color: #eee;
+  --border-color: #e3e4e8;
   --text-color: #2c3e50;
-  --bg-color: #fff;
+  --bg-color: #f2f3f5;
+  --card-color: #fff;
   --mask-color: rgba(255, 255, 255, 0.8);
   --max-width: 480px;
   &.dark {
-    --border-color: #444;
+    --border-color: #4a4a4a;
     --text-color: #eee;
-    --bg-color: #333;
+    --bg-color: #262626;
+    --card-color: #333;
     --mask-color: rgba(51, 51, 51, 0.8);
   }
 }

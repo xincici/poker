@@ -97,7 +97,7 @@ const bursts = [
   display: flex;
   flex-wrap: wrap;
   padding: 15px 0;
-  border-bottom: 1px solid var(--border-color);
+  overflow: hidden;
   .rule {
     flex: 1 0 50%;
     line-height: 1.8;

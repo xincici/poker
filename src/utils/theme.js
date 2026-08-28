@@ -30,7 +30,7 @@ export const isDark = computed(() => {
   return systemIsDark.value; // auto：跟随系统
 });
 
-const color = computed(() => isDark.value ? '#333' : '#fff');
+const color = computed(() => isDark.value ? '#262626' : '#f2f3f5');
 
 // 手动切换：auto → dark → light → auto
 export const toggle = () => {

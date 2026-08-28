@@ -2,36 +2,38 @@
   <div class="wrapper">
     <TopHeader />
     <div class="game-area">
-      <RuleArea class="uptop1" :result="game.result" />
-      <div class="money-area uptop2">
-        <div>
+      <RuleArea class="uptop1 card" :result="game.result" />
+      <div class="money-area uptop2 card">
+        <div class="money-item">
           <span class="title">{{ i18n('total') }}</span>
           <span class="money" :class="{zoom: game.zoomTotal}">{{ game.total }}</span>
         </div>
-        <div>
+        <div class="money-item">
           <span class="title">{{ i18n('bonus') }}</span>
           <span class="money" :class="{zoom: game.zoomWin}">{{ game.bonus }}</span>
         </div>
-        <div>
+        <div class="money-item">
           <span class="title">{{ i18n('bet') }}</span>
-          <button
-            @click="changeBet(-1)"
-            class="btn"
-            :disabled="bet === MIN_BET || game.stage > WAIT || game.animating"
-          >
-            <i i-carbon-subtract-alt />
-          </button>
-          <span class="money">{{ bet }}</span>
-          <button
-            @click="changeBet(1)"
-            class="btn"
-            :disabled="bet === MAX_BET || game.stage > WAIT || game.animating"
-          >
-            <i i-carbon-add-alt />
-          </button>
+          <div class="bet-line">
+            <button
+              @click="changeBet(-1)"
+              class="btn btn-bet"
+              :disabled="bet === MIN_BET || game.stage !== WAIT || game.animating"
+            >
+              <i i-carbon-subtract-alt />
+            </button>
+            <span class="money">{{ bet }}</span>
+            <button
+              @click="changeBet(1)"
+              class="btn btn-bet"
+              :disabled="bet === MAX_BET || game.stage !== WAIT || game.animating"
+            >
+              <i i-carbon-add-alt />
+            </button>
+          </div>
         </div>
       </div>
-      <div class="card-area uptop3">
+      <div class="card-area uptop3 card">
         <CardItem
           v-for="(card, idx) in game.cards"
           :key="idx"
@@ -49,7 +51,7 @@
       </div>
       <div
         v-if="dice"
-        class="guess-area uptop4"
+        class="guess-area uptop4 card"
         :class="`${manualDice ? 'uptop0' : ''}`"
         ref="guessArea"
       >
@@ -84,33 +86,25 @@
           />
         </div>
       </div>
-      <div class="opt-area uptop5">
+      <div class="opt-area uptop5 card">
+        <template v-if="dice && game.stage === GUESS">
+          <button class="btn" @click="guessBigOrSmall(true)">
+            {{ i18n('big') }}
+          </button>
+          <button class="btn" @click="guessBigOrSmall(false)">
+            {{ i18n('small') }}
+          </button>
+        </template>
         <button
+          v-if="!game.animating && game.stage >= LOSE"
           class="btn"
-          v-if="dice"
-          :disabled="game.stage !== GUESS"
-          @click="guessBigOrSmall(true)"
-        >
-          {{ i18n('big') }}
-        </button>
-        <button
-          class="btn"
-          v-if="dice"
-          :disabled="game.stage !== GUESS"
-          @click="guessBigOrSmall(false)"
-        >
-          {{ i18n('small') }}
-        </button>
-        <button
-          class="btn"
-          :disabled="game.animating || game.stage < LOSE"
           @click="onResetClick"
         >
           {{ game.stage === GUESS ? i18n('settle') : i18n('reset') }}
         </button>
         <button
+          v-if="!game.animating && game.stage <= SECOND"
           class="btn"
-          :disabled="game.animating || game.stage > SECOND"
           @click="onPlayClick"
         >
           {{ game.stage === WAIT ? i18n('roll') : i18n('change') }}
@@ -421,10 +415,20 @@ function getResult(cardsNum) {
   font-weight: bold;
   padding: 0;
   margin: 0;
-  background: rgba(60, 160, 60, .9);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #4caf50, #388e3c);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, .15);
   cursor: pointer;
+  transition: transform .1s ease, box-shadow .1s ease;
+  &:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .15);
+  }
   &:disabled {
     background: rgba(200, 200, 200, .9);
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none;
   }
 }
 .wrapper {
@@ -437,33 +441,41 @@ function getResult(cardsNum) {
   overflow-y: auto;
   .game-area {
     max-width: var(--max-width);
-    border: 1px solid var(--border-color);
-    border-width: 0 1px;
     margin: 0 auto 50px;
     box-sizing: border-box;
-    padding-top: 50px;
+    padding: 62px 12px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    .card {
+      background: var(--card-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-sizing: border-box;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+    }
     .money-area {
       display: flex;
-      border-bottom: 1px solid var(--border-color);
-      > div {
+      padding: 12px 0;
+      .money-item {
         flex: 1 0 33%;
-        position: relative;
-        text-align: right;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         line-height: 1.8;
         box-sizing: border-box;
         border-right: 1px solid var(--border-color);
         font-size: 15px;
-        padding: 22px 10px 2px;
         font-weight: bold;
         &:last-child {
           flex: 1 0 34%;
           border-right: 0 none;
         }
         .title {
-          position: absolute;
-          top: 0px;
-          left: 5px;
-          font-size: 14px;
+          font-size: 13px;
+          font-weight: normal;
+          opacity: .6;
         }
         .money {
           display: inline-block;
@@ -472,18 +484,30 @@ function getResult(cardsNum) {
             animation: 0.6s ease-in-out 0s zoom;
           }
         }
-        .btn {
-          border: 1px solid var(--border-color);
-          border-radius: 3px;
-          padding: 5px 3px;
+        .bet-line {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+          min-height: 30px;
+        }
+        .btn-bet {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+          line-height: 1;
         }
       }
     }
     .card-area {
       padding: 25px 0;
-      border-bottom: 1px solid var(--border-color);
       position: relative;
       font-size: 0;
+      overflow: hidden;
       .result-win,.result-lose {
         background: var(--mask-color);
         position: absolute;
@@ -503,7 +527,7 @@ function getResult(cardsNum) {
       }
     }
     .guess-area {
-      padding: 10px 0 25px;
+      padding: 10px 12px 25px;
       text-align: left;
       overflow-x: auto;
       font-size: 0;
@@ -541,10 +565,12 @@ function getResult(cardsNum) {
     .opt-area {
       display: flex;
       align-items: center;
-      height: 60px;
+      gap: 10px;
+      min-height: 64px;
+      padding: 10px;
       .btn {
         flex: 1 0 25%;
-        height: 100%;
+        height: 44px;
         font-size: 16px;
       }
     }
