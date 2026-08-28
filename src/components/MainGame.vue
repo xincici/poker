@@ -99,15 +99,17 @@
           </button>
         </template>
         <button
-          v-if="!game.animating && game.stage >= LOSE"
+          v-if="game.stage >= LOSE"
           class="btn"
+          :disabled="game.animating"
           @click="onResetClick"
         >
           {{ game.stage === GUESS ? i18n('settle') : i18n('reset') }}
         </button>
         <button
-          v-if="!game.animating && game.stage <= SECOND"
+          v-if="game.stage <= SECOND"
           class="btn"
+          :disabled="game.animating"
           @click="onPlayClick"
         >
           {{ game.stage === WAIT ? i18n('roll') : i18n('change') }}
