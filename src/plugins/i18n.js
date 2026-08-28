@@ -33,6 +33,7 @@ const en = {
   twopairs: 'Two pairs',
   onepair: 'One pair',
   times: 'mul',
+  rotateTip: 'Please rotate your device to portrait',
 };
 const cn = {
   gameTitle: '德州扑克',
@@ -65,6 +66,7 @@ const cn = {
   twopairs: '两　对',
   onepair: '大于 8 一对',
   times: '倍',
+  rotateTip: '请旋转设备至竖屏',
 };
 
 const langs = { en, cn };

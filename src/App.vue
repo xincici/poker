@@ -1,5 +1,9 @@
 <template>
   <MainGame />
+  <div class="landscape-tip">
+    <span>📱</span>
+    <span>{{ i18n('rotateTip') }}</span>
+  </div>
 </template>
 
 <script setup>
@@ -18,6 +22,32 @@ html, body, #app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
+}
+.landscape-tip {
+  display: none;
+}
+@media only screen and (orientation: landscape) and (max-height: 500px) {
+  .landscape-tip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--text-color);
+    background: var(--bg-color);
+    span:first-child {
+      font-size: 40px;
+    }
+  }
 }
 body {
   --border-color: #e3e4e8;
