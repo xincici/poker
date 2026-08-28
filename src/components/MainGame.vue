@@ -42,11 +42,14 @@
           :hold="game.holds[idx]"
           @click="onCardClick(idx)"
         />
-        <div class="result-win" v-if="game.stage >= GUESS">
+        <div class="result-win" v-if="game.stage === GUESS">
           🎉🎉 {{ i18n('tipWin') }} 🎉🎉
         </div>
         <div class="result-lose" v-if="game.stage === LOSE">
           👻👻 {{ i18n('tipLost') }} 👻👻
+        </div>
+        <div class="result-guess-lose" v-if="game.stage === GUESS_LOSE">
+          😭😭 {{ i18n('tipGuessLose') }} 😭😭
         </div>
       </div>
       <div
@@ -508,7 +511,7 @@ function getResult(cardsNum) {
       position: relative;
       font-size: 0;
       overflow: hidden;
-      .result-win,.result-lose {
+      .result-win,.result-lose,.result-guess-lose {
         background: var(--mask-color);
         position: absolute;
         top: 0;
@@ -524,6 +527,9 @@ function getResult(cardsNum) {
       }
       .result-lose {
         color: #b11;
+      }
+      .result-guess-lose {
+        color: #d4691e;
       }
     }
     .guess-area {

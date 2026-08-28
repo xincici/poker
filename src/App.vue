@@ -21,6 +21,7 @@ html, body, #app {
 }
 body {
   --border-color: #e3e4e8;
+  --card-border-color: #c9ccd4;
   --text-color: #2c3e50;
   --bg-color: #f2f3f5;
   --card-color: #fff;
@@ -28,6 +29,7 @@ body {
   --max-width: 480px;
   &.dark {
     --border-color: #4a4a4a;
+    --card-border-color: #4a4a4a;
     --text-color: #eee;
     --bg-color: #262626;
     --card-color: #333;

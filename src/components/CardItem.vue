@@ -71,7 +71,7 @@ const point = computed(() => props.num ? NUMS[props.num - 1] : '');
   &-mini {
     --width: 40px;
     --height: 60px;
-    --margin: 1px;
+    --margin: 3px;
     --radius: 3px;
     --pos: 1px;
     --text-size: 12px;
@@ -109,7 +109,7 @@ const point = computed(() => props.num ? NUMS[props.num - 1] : '');
   left: 0;
   width: var(--width);
   height: var(--height);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--card-border-color, var(--border-color));
   border-radius: var(--radius);
   margin: 0;
   background: #fafafa;
