@@ -584,9 +584,4 @@ function getResult(cardsNum) {
     }
   }
 }
-@media only screen and (min-width: 320px) and (max-width: 720px) {
-  * {
-    user-select: none;
-  }
-}
 </style>

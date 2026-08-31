@@ -11,6 +11,11 @@ import MainGame from './components/MainGame.vue';
 </script>
 
 <style lang="scss">
+* {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
 html, body, #app {
   height: 100vh;
   margin: 0;
